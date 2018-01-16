@@ -5,7 +5,7 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.AVar (AVAR)
 import Control.Monad.Eff.Console (CONSOLE)
-import Data.DotLang (Definition(..), Edge(..), Graph(..), Node(..), toText)
+import Data.DotLang (Definition(..), Edge(..), EdgeType(..), Graph(..), edge, node, toText, (==>))
 import Test.Unit (suite, test)
 import Test.Unit.Assert (equal)
 import Test.Unit.Console (TESTOUTPUT)
@@ -22,11 +22,11 @@ main = runTest do
     test "basic test" do
       let
         g = Graph [
-          NodeDef $ Node "a" [],
-          NodeDef $ Node "b" [],
-          EdgeDef (Edge "a" "b"),
+          node "a" [],
+          node "b" [],
+          "a" ==> "b",
           Subgraph [
-            NodeDef $ Node "d" []
+            node "d" []
           ]
         ]
-      equal (toText g) "graph {\na []; b []; a -> b;\n subgraph {\n d []; }}"
+      equal "graph {\na [];\n b [];\n a -> b;\n subgraph {\n d [];\n }}" (toText g)
