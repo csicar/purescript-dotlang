@@ -1,5 +1,6 @@
 {
   "name": "purescript-dotlang",
+  "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
