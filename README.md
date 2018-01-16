@@ -5,11 +5,11 @@ define your model like this:
 
 ```purescript
 Graph [
-    NodeDef $ Node "a" [],
-    NodeDef $ Node "b" [],
-    EdgeDef (Edge "a" "b"),
+    node "a" [],
+    node "b" [],
+    "a" ==> "b",
     Subgraph [
-    NodeDef $ Node "d" []
+    node "d" []
     ]
 ]
 ```
