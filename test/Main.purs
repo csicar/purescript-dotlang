@@ -2,10 +2,11 @@ module Test.Main where
 
 import Prelude
 
+import Color.Scheme.MaterialDesign (red)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.AVar (AVAR)
 import Control.Monad.Eff.Console (CONSOLE)
-import Data.DotLang (Definition(..), Edge(..), EdgeType(..), Graph(..), edge, node, toText, (==>))
+import Data.DotLang (Attr(..), Definition(..), FillStyle(..), Graph(..), ShapeType(..), node, toText, (==>))
 import Test.Unit (suite, test)
 import Test.Unit.Assert (equal)
 import Test.Unit.Console (TESTOUTPUT)
@@ -21,12 +22,13 @@ main = runTest do
   suite "DotLang" do
     test "basic test" do
       let
-        g = Graph [
-          node "a" [],
+        g = DiGraph [
+          node "a" [ Shape Diamond, Style Filled,  FillColor red ],
           node "b" [],
           "a" ==> "b",
+          "a" ==> "d",
           Subgraph [
             node "d" []
           ]
         ]
-      equal "graph {\na [];\n b [];\n a -> b;\n subgraph {\n d [];\n }}" (toText g)
+      equal "digraph {a [shape=diamond, style=filled, fillcolor=\"#f44336\"]; b []; a -> b; a -> d; subgraph { d []; }}" (toText g)

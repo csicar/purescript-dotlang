@@ -4,10 +4,11 @@ Dot-Lang
 define your model like this:
 
 ```purescript
-Graph [
-    node "a" [],
+DiGraph [
+    node "a" [ Shape Diamond, Style Filled,  FillColor red ],
     node "b" [],
     "a" ==> "b",
+    "a" ==> "d",
     Subgraph [
     node "d" []
     ]
@@ -17,10 +18,11 @@ Graph [
 can be rendered using `toText` to:
 
 ```
-graph {
-    a [];
+digraph {
+    a [shape=diamond ,style=filled ,fillcolor=\"#f44336\"];
     b [];
     a -> b;
+    a -> d;
     subgraph {
         d []; 
     }

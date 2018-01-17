@@ -5,7 +5,6 @@ import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.String (joinWith)
 import Prelude (class Show, show, ($), (<$>), (<>))
-import Type.Data.Boolean (kind Boolean)
 
 -- | type alias for a Nodes Name
 type Id = String
@@ -122,13 +121,13 @@ instance showAttr :: Show Attr where
 
 instance attrDotLang :: DotLang Attr where
   toText (Margin i) = "margin="<> show i
-  toText (FontColor s) = "fontcolor="<> toHexString s
+  toText (FontColor s) = "fontcolor=\"" <> toHexString s <> "\""
   toText (FontSize i) = "fontsize="<> show i
   toText (Width i) = "width="<> show i
   toText (Shape t) = "shape="<> (toText t)
   toText (Style f) = "style="<>(toText f)
   toText (Label t) = "label="<> show t
-  toText (FillColor c) = "fillcolor="<> toHexString c
+  toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
   toText (PenSize i) = "pensize="<> show i
 
 -- | Dot-Node
@@ -159,7 +158,7 @@ instance showNode :: Show Node where
   show = genericShow
 
 instance nodeDotLang :: DotLang Node where
-  toText (Node id attrs) = id <> " [" <> (joinWith " ," (toText <$> attrs)) <> "]"
+  toText (Node id attrs) = id <> " [" <> (joinWith ", " (toText <$> attrs)) <> "]"
 
 
 data EdgeType
@@ -215,9 +214,9 @@ infix 5 backwardEdge as <==
 infix 5 normalEdge as -==-
 
 instance definitionDotlang :: DotLang Definition where
-  toText (NodeDef node) = toText node <> ";\n "
-  toText (EdgeDef edge) = toText edge <> ";\n "
-  toText (Subgraph defs) = "subgraph {\n " <> (joinWith "" $ toText <$> defs) <> "}"
+  toText (NodeDef n) = toText n <> "; "
+  toText (EdgeDef e) = toText e <> "; "
+  toText (Subgraph defs) = "subgraph { " <> (joinWith "" $ toText <$> defs) <> "}"
 
 -- | graph can either be a graph or digraph
 data Graph
@@ -226,13 +225,13 @@ data Graph
 
 
 instance graphDotLang :: DotLang Graph where
-  toText (Graph defs) = "graph {\n" <> (joinWith "" $ toText <$> defs) <> "}"
-  toText (DiGraph defs) = "digraph {\n" <> (joinWith "" $ toText <$> defs) <> "}"
+  toText (Graph defs) = "graph {" <> (joinWith "" $ toText <$> defs) <> "}"
+  toText (DiGraph defs) = "digraph {" <> (joinWith "" $ toText <$> defs) <> "}"
 
 -- | create graph from Nodes and Edges
 -- | example: `graphFromElements [Node "e" [], Node "d" []] [Edge "e" "f"]`
 graphFromElements :: Array (Node) -> Array (Edge) -> Graph
-graphFromElements nodes edges = DiGraph $ (NodeDef <$> nodes) <> (EdgeDef <$> edges)
+graphFromElements n e = DiGraph $ (NodeDef <$> n) <> (EdgeDef <$> e)
 
 -- | `a` is a type that can be represented by a Dot-Graph
 class GraphRepr a where
