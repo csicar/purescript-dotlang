@@ -1,6 +1,8 @@
 Dot-Lang
 ========
 
+documentation can be found on [pursuit](https://pursuit.purescript.org/packages/purescript-dotlang/1.1.0/docs/Data.DotLang#t:DotLang)
+
 define your model like this:
 
 ```purescript
