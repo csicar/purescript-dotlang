@@ -3,21 +3,13 @@ module Test.Main where
 import Prelude
 
 import Color.Scheme.MaterialDesign (red)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.AVar (AVAR)
-import Control.Monad.Eff.Console (CONSOLE)
 import Data.DotLang (Attr(..), Definition(..), FillStyle(..), Graph(..), ShapeType(..), node, toText, (==>))
+import Effect (Effect)
 import Test.Unit (suite, test)
 import Test.Unit.Assert (equal)
-import Test.Unit.Console (TESTOUTPUT)
 import Test.Unit.Main (runTest)
 
-main ∷ Eff
-        ( console :: CONSOLE
-        , testOutput :: TESTOUTPUT
-        , avar :: AVAR
-        )
-        Unit
+main ∷ Effect Unit
 main = runTest do
   suite "DotLang" do
     test "basic test" do
