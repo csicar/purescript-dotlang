@@ -112,7 +112,7 @@ data Attr
   | Shape ShapeType
   | Style FillStyle
   | FillColor Color
-  | PenSize Number
+  | PenWidth Number
 
 derive instance genericAttr :: Generic Attr _
 
@@ -128,7 +128,7 @@ instance attrDotLang :: DotLang Attr where
   toText (Style f) = "style="<>(toText f)
   toText (Label t) = "label="<> show t
   toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
-  toText (PenSize i) = "pensize="<> show i
+  toText (PenWidth i) = "penwidth="<> show i
 
 -- | Dot-Node
 -- | example :
