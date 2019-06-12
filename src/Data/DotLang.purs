@@ -57,8 +57,8 @@ instance dotLangEdgeType :: DotLang EdgeType where
   toText NoDir = "--"
 
 -- | egde from id to id
--- | `toText $ Edge "a" "b" []` == `a -> b []`
--- | option for different arrows is missing
+-- | `toText $ Edge Forward "a" "b" []` == `a -> b []`
+-- | EdgeType determines the direction of the arrow
 data Edge = Edge EdgeType Id Id (Array Edge.Attr)
 
 derive instance genericEdge :: Generic Edge _
@@ -108,6 +108,7 @@ infix 5 forwardEdge as ==>
 -- |
 -- | ```purescript
 -- | "a" =*> "b" $ [ Edge.FillColor red ]
+-- | -- toText will be: a -> b [fillcolor="#f44336"];
 -- | ```
 -- | Forward edge with attributes
 infix 5 forwardEdgeWithAttrs as =*>
