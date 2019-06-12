@@ -6,6 +6,7 @@ import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.String (joinWith)
+import Data.Array (null)
 import Prelude (class Show, ($), (<$>), (<>))
 
 -- | type alias for a Nodes Name
@@ -67,7 +68,9 @@ instance showEdge :: Show Edge where
   show = genericShow
 
 instance dotLangEdge :: DotLang Edge where
-  toText (Edge e id id2 attrs) = id <> " " <> (toText e) <> " " <> id2 <> " [" <> joinWith ", " (toText <$> attrs) <> "]"
+  toText (Edge e id id2 attrs) = id <> " " <> (toText e) <> " " <> id2 <> attrText
+    where
+      attrText = if null attrs then "" else " [" <> joinWith ", " (toText <$> attrs) <> "]"
 
 -- | definition in a graph
 data Definition

@@ -28,7 +28,7 @@ main = runTest do
             node "d" []
           ]
         ]
-      equal "digraph {a [shape=diamond, style=filled, fillcolor=\"#f44336\"]; b []; a -> b []; a -> d [fillcolor=\"#f44336\"]; subgraph { d []; }}" (toText g)
+      equal "digraph {a [shape=diamond, style=filled, fillcolor=\"#f44336\"]; b []; a -> b; a -> d [fillcolor=\"#f44336\"]; subgraph { d []; }}" (toText g)
     test "examples from documentation" do
-      equal (toText $ Edge Forward "a" "b" []) "a -> b []"
+      equal (toText $ Edge Forward "a" "b" []) "a -> b"
       equal (toText $ "a" =*> "b" $ [ Edge.FillColor red ]) "a -> b [fillcolor=\"#f44336\"]; "

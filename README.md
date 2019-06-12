@@ -21,7 +21,7 @@ can be rendered using `toText` to:
 
 ```
 digraph {
-    a [shape=diamond ,style=filled ,fillcolor="#f44336"];
+    a [shape=diamond, style=filled, fillcolor="#f44336"];
     b [];
     a -> b;
     a -> d [fillcolor="#f44336"];
