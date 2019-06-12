@@ -57,7 +57,7 @@ instance dotLangEdgeType :: DotLang EdgeType where
   toText NoDir = "--"
 
 -- | egde from id to id
--- | `toText $ Edge "a" "b"` == `a -> b`
+-- | `toText $ Edge "a" "b" []` == `a -> b []`
 -- | option for different arrows is missing
 data Edge = Edge EdgeType Id Id (Array Edge.Attr)
 
@@ -81,18 +81,60 @@ node id attrs = NodeDef $ Node id attrs
 edge :: EdgeType → Id → Id → Array Edge.Attr → Definition
 edge t id id2 attrs = EdgeDef $ Edge t id id2 attrs
 
+forwardEdgeWithAttrs ∷ Id → Id → Array Edge.Attr → Definition
+forwardEdgeWithAttrs = edge Forward
+
 forwardEdge :: Id → Id → Definition
-forwardEdge l r = edge Forward l r []
+forwardEdge l r = forwardEdgeWithAttrs l r []
 
-backwardEdge :: Id → Id → Definition
-backwardEdge l r = edge Backward l r []
+backwardEdgeWithAttrs ∷ Id → Id → Array Edge.Attr → Definition
+backwardEdgeWithAttrs = edge Backward
 
-normalEdge :: Id → Id → Definition
-normalEdge l r = edge NoDir l r []
+backwardEdge ∷ Id → Id → Definition
+backwardEdge l r = backwardEdgeWithAttrs l r []
 
+normalEdgeWithAttrs ∷ Id → Id → Array Edge.Attr → Definition
+normalEdgeWithAttrs = edge NoDir
+
+normalEdge ∷ Id → Id → Definition
+normalEdge l r = normalEdgeWithAttrs l r []
+
+-- |
+-- | ```purescript
+-- | "a" ==> "b" -- :: Definition
+-- | ```
+-- |
 infix 5 forwardEdge as ==>
+-- |
+-- | ```purescript
+-- | "a" =*> "b" $ [ Edge.FillColor red ]
+-- | ```
+-- | Forward edge with attributes
+infix 5 forwardEdgeWithAttrs as =*>
+-- |
+-- | ```purescript
+-- | "a" <== "b" -- :: Definition
+-- | ```
+-- |
 infix 5 backwardEdge as <==
+-- |
+-- | ```purescript
+-- | "a" <*= "b" $ [ Edge.FillColor red ]
+-- | ```
+-- | Backward edge with attributes
+infix 5 backwardEdgeWithAttrs as <*=
+-- |
+-- | ```purescript
+-- | "a" -==- "b"
+-- | ```
+-- |
 infix 5 normalEdge as -==-
+-- |
+-- | ```purescript
+-- | "a" =*= "b" $ [ Edge.FillColor red ]
+-- | ```
+-- | Normal edge with attibutes
+infix 5 normalEdgeWithAttrs as =*=
 
 instance definitionDotlang :: DotLang Definition where
   toText (NodeDef n) = toText n <> "; "
@@ -117,4 +159,5 @@ graphFromElements n e = DiGraph $ (NodeDef <$> n) <> (EdgeDef <$> e)
 -- | `a` is a type that can be represented by a Dot-Graph
 class GraphRepr a where
   toGraph :: a -> Graph
+
 

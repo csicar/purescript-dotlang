@@ -3,7 +3,7 @@ module Test.Main where
 import Prelude
 
 import Color.Scheme.MaterialDesign (red)
-import Data.DotLang (Definition(..), EdgeType(..), Graph(..), edge, node, (==>))
+import Data.DotLang (Definition(..), Graph(..), node, (==>), (=*>))
 import Data.DotLang.Attr (FillStyle(..))
 import Data.DotLang.Attr.Edge as Edge
 import Data.DotLang.Attr.Node (Attr(..), ShapeType(..))
@@ -23,7 +23,7 @@ main = runTest do
           node "a" [ Shape Diamond, Style Filled,  Node.FillColor red ],
           node "b" [],
           "a" ==> "b",
-          edge Forward "a" "d" [ Edge.FillColor red ],
+          "a" =*> "d" $ [ Edge.FillColor red ],
           Subgraph [
             node "d" []
           ]
