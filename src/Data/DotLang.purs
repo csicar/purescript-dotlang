@@ -78,9 +78,20 @@ data Definition
   | EdgeDef Edge
   | Subgraph (Array Definition)
 
+-- |
+-- | ```purescript
+-- | node "a" [] -- ∷ Definition
+-- | ```
+-- | node as a part of a definition
 node :: Id → Array Node.Attr → Definition
 node id attrs = NodeDef $ Node id attrs
 
+-- |
+-- | ```purescript
+-- | edge Forward "a" "b" [] -- ∷ Definition
+-- | ```
+-- | edge as a part of a definition. 
+-- | `==>` and `=*>` can also be used for that purpose.
 edge :: EdgeType → Id → Id → Array Edge.Attr → Definition
 edge t id id2 attrs = EdgeDef $ Edge t id id2 attrs
 
@@ -106,32 +117,32 @@ normalEdge l r = normalEdgeWithAttrs l r []
 -- | ```purescript
 -- | "a" ==> "b" -- :: Definition
 -- | ```
--- |
+-- | Forward edge as as a definition
 infix 5 forwardEdge as ==>
 -- |
 -- | ```purescript
 -- | "a" =*> "b" $ [ Edge.FillColor red ]
 -- | -- toText will be: a -> b [fillcolor="#f44336"];
 -- | ```
--- | Forward edge with attributes
+-- | Forward edge with attributes as a definition
 infix 5 forwardEdgeWithAttrs as =*>
 -- |
 -- | ```purescript
 -- | "a" <== "b" -- :: Definition
 -- | ```
--- |
+-- | Backward edge as a definition
 infix 5 backwardEdge as <==
 -- |
 -- | ```purescript
 -- | "a" <*= "b" $ [ Edge.FillColor red ]
 -- | ```
--- | Backward edge with attributes
+-- | Backward edge with attributes as a definition
 infix 5 backwardEdgeWithAttrs as <*=
 -- |
 -- | ```purescript
 -- | "a" -==- "b"
 -- | ```
--- |
+-- | Normal edge as definition
 infix 5 normalEdge as -==-
 -- |
 -- | ```purescript
