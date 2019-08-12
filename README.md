@@ -30,3 +30,35 @@ digraph {
     }
 }
 ```
+
+### Installation
+
+#### Spago
+
+```dhall
+let additions = 
+    { dotlang = 
+        { dependencies = 
+            [ "colors"
+            , "console"
+            , "effect"
+            , "generics-rep"
+            , "prelude"
+            , "psci-support"
+            , "strings"
+            , "test-unit"
+            ]
+        , repo = "https://github.com/csicar/purescript-dotlang.git"
+        , version = "v2.0.0"
+        }
+    }
+```
+```bash
+spago install dotlang
+```
+
+#### Bower
+
+```bash
+bower i purescript-dotlang
+```
