@@ -8,13 +8,22 @@ import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 
+data LabelValue
+  = TextLabel String
+  | HtmlLabel String
+
+derive instance genericLabel :: Generic LabelValue _
+
+instance showLabel :: Show LabelValue where
+  show = genericShow
+
 data Attr
   = Color Color
   | Margin Int
   | FontColor Color
   | FontSize Int
   | Width Int
-  | Label String
+  | Label LabelValue
   | Shape ShapeType
   | Style FillStyle
   | FillColor Color
@@ -33,7 +42,8 @@ instance attrDotLang :: DotLang Attr where
   toText (Width i) = "width="<> show i
   toText (Shape t) = "shape="<> toText t
   toText (Style f) = "style="<> toText f
-  toText (Label t) = "label="<> show t
+  toText (Label (TextLabel t)) = "label=" <> show t
+  toText (Label (HtmlLabel t)) = "label=" <> t
   toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
   toText (PenWidth i) = "penwidth="<> show i
 
@@ -115,3 +125,19 @@ instance dotLangShape :: DotLang ShapeType where
   toText Rarrow = "Rarrow"
   toText Larrow = "Larrow"
   toText Lpromoter = "Lpromoter"
+
+-- |
+-- | ```purescript
+-- | htmlLabel "<table><tr><td>Label</td></tr></table>" -- :: Attr
+-- | ```
+-- | htmlLabel as a part of an attribute of a node.
+htmlLabel :: String -> Attr
+htmlLabel = HtmlLabel >>> Label
+
+-- |
+-- | ```purescript
+-- | textLabel "..." -- :: Attr
+-- | ```
+-- | label as a part of an attribute of a node.
+label :: String -> Attr
+label = TextLabel >>> Label
