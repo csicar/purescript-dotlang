@@ -62,3 +62,15 @@ spago install dotlang
 ```bash
 bower i purescript-dotlang
 ```
+
+
+
+Changelog
+=========
+
+v3.0.0
+------
+
+Breaking Changes:
+
+- `Label` of `Edge` and `Node` now support HTML and no formatting: To **migrate** replace old calls to `Label` with calls to `label`
