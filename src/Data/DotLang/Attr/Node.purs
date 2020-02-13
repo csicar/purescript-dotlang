@@ -7,6 +7,8 @@ import Data.DotLang.Attr (FillStyle)
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
+import Data.Maybe(Maybe(..))
+import Data.String.CodeUnits(charAt)
 
 data Attr
   = Color Color
@@ -33,7 +35,9 @@ instance attrDotLang :: DotLang Attr where
   toText (Width i) = "width="<> show i
   toText (Shape t) = "shape="<> toText t
   toText (Style f) = "style="<> toText f
-  toText (Label t) = "label="<> show t
+  toText (Label t) = case charAt 0 t of
+                          Just '<' -> "label="<> t
+                          _ -> "label=" <> show t
   toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
   toText (PenWidth i) = "penwidth="<> show i
 
