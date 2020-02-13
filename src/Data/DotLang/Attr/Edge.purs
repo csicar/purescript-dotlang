@@ -40,3 +40,19 @@ instance attrDotLang :: DotLang Attr where
   toText (Label (HtmlLabel t)) = "label=" <> t
   toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
   toText (PenWidth i) = "penwidth="<> show i
+
+-- |
+-- | ```purescript
+-- | htmlLabel "<table><tr><td>Label</td></tr></table>" -- :: Attr
+-- | ```
+-- | htmlLabel as a part of an attribute of an edge.
+htmlLabel :: String -> Attr
+htmlLabel = HtmlLabel >>> Label
+
+-- |
+-- | ```purescript
+-- | textLabel "..." -- :: Attr
+-- | ```
+-- | textLabel as a part of an attribute of an edge.
+textLabel :: String -> Attr
+textLabel = HtmlLabel >>> Label

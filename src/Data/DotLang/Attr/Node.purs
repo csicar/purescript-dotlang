@@ -125,3 +125,19 @@ instance dotLangShape :: DotLang ShapeType where
   toText Rarrow = "Rarrow"
   toText Larrow = "Larrow"
   toText Lpromoter = "Lpromoter"
+
+-- |
+-- | ```purescript
+-- | htmlLabel "<table><tr><td>Label</td></tr></table>" -- :: Attr
+-- | ```
+-- | htmlLabel as a part of an attribute of an edge.
+htmlLabel :: String -> Attr
+htmlLabel = HtmlLabel >>> Label
+
+-- |
+-- | ```purescript
+-- | textLabel "..." -- :: Attr
+-- | ```
+-- | textLabel as a part of an attribute of an edge.
+textLabel :: String -> Attr
+textLabel = HtmlLabel >>> Label

@@ -32,7 +32,7 @@ nodeId (Node id _) = id
 -- | change Nodes id to a new one; keeing the old id as the label
 -- | example: `mapNodeId (\a -> a+"!") (Node "e" []) == Node "e!" [Label "e"]`
 changeNodeId :: (Id -> Id) -> Node -> Node
-changeNodeId f (Node id attr) = Node (f id) $ attr <> [Node.Label (Node.TextLabel id)]
+changeNodeId f (Node id attr) = Node (f id) $ attr <> [Node.textLabel id]
 
 derive instance genericNode :: Generic Node _
 
