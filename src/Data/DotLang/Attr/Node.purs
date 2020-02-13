@@ -138,6 +138,6 @@ htmlLabel = HtmlLabel >>> Label
 -- | ```purescript
 -- | textLabel "..." -- :: Attr
 -- | ```
--- | textLabel as a part of an attribute of a node.
-textLabel :: String -> Attr
-textLabel = HtmlLabel >>> Label
+-- | label as a part of an attribute of a node.
+label :: String -> Attr
+label = TextLabel >>> Label

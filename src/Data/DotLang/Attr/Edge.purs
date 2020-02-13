@@ -53,6 +53,6 @@ htmlLabel = HtmlLabel >>> Label
 -- | ```purescript
 -- | textLabel "..." -- :: Attr
 -- | ```
--- | textLabel as a part of an attribute of an edge.
-textLabel :: String -> Attr
-textLabel = HtmlLabel >>> Label
+-- | label as a part of an attribute of an edge.
+label :: String -> Attr
+label = TextLabel >>> Label
