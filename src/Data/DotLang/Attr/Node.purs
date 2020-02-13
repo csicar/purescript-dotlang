@@ -130,7 +130,7 @@ instance dotLangShape :: DotLang ShapeType where
 -- | ```purescript
 -- | htmlLabel "<table><tr><td>Label</td></tr></table>" -- :: Attr
 -- | ```
--- | htmlLabel as a part of an attribute of an edge.
+-- | htmlLabel as a part of an attribute of a node.
 htmlLabel :: String -> Attr
 htmlLabel = HtmlLabel >>> Label
 
@@ -138,6 +138,6 @@ htmlLabel = HtmlLabel >>> Label
 -- | ```purescript
 -- | textLabel "..." -- :: Attr
 -- | ```
--- | textLabel as a part of an attribute of an edge.
+-- | textLabel as a part of an attribute of a node.
 textLabel :: String -> Attr
 textLabel = HtmlLabel >>> Label
