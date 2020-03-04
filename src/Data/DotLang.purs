@@ -82,6 +82,14 @@ data Definition
 
 -- |
 -- | ```purescript
+-- | global [ Global.RankDir  Global.FromLeft ] -- ∷ Definition
+-- | ```
+-- | global as a part of a definition
+global :: Array Global.Attr -> Definition
+global = Global
+
+-- |
+-- | ```purescript
 -- | node "a" [] -- ∷ Definition
 -- | ```
 -- | node as a part of a definition
