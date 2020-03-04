@@ -2,6 +2,7 @@ module Data.DotLang where
 
 import Data.DotLang.Attr.Edge as Edge
 import Data.DotLang.Attr.Node as Node
+import Data.DotLang.Attr.Global as Global
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
@@ -74,9 +75,18 @@ instance dotLangEdge :: DotLang Edge where
 
 -- | definition in a graph
 data Definition
-  = NodeDef Node
+  = Global (Array Global.Attr)
+  | NodeDef Node
   | EdgeDef Edge
   | Subgraph (Array Definition)
+
+-- |
+-- | ```purescript
+-- | global [ Global.RankDir  Global.FromLeft ] -- ∷ Definition
+-- | ```
+-- | global as a part of a definition
+global :: Array Global.Attr -> Definition
+global = Global
 
 -- |
 -- | ```purescript
@@ -152,6 +162,7 @@ infix 5 normalEdge as -==-
 infix 5 normalEdgeWithAttrs as =*=
 
 instance definitionDotlang :: DotLang Definition where
+  toText (Global attrs) = joinWith "; " (toText <$> attrs) <> "; "
   toText (NodeDef n) = toText n <> "; "
   toText (EdgeDef e) = toText e <> "; "
   toText (Subgraph defs) = "subgraph { " <> (joinWith "" $ toText <$> defs) <> "}"
