@@ -167,20 +167,40 @@ instance definitionDotlang :: DotLang Definition where
   toText (EdgeDef e) = toText e <> "; "
   toText (Subgraph defs) = "subgraph { " <> (joinWith "" $ toText <$> defs) <> "}"
 
+-- | A graph can either be strict or non-strict
+data Strict
+  = Strict
+  | NonStrict
+
+instance strictDotLang :: DotLang Strict where
+  toText Strict = "strict "
+  toText NonStrict = ""
+
 -- | graph can either be a graph or digraph
 data Graph
-  = Graph (Array Definition)
-  | DiGraph (Array Definition)
-
+  = Graph Strict (Array Definition)
+  | DiGraph Strict (Array Definition)
 
 instance graphDotLang :: DotLang Graph where
-  toText (Graph defs) = "graph {" <> (joinWith "" $ toText <$> defs) <> "}"
-  toText (DiGraph defs) = "digraph {" <> (joinWith "" $ toText <$> defs) <> "}"
+  toText (Graph strict defs) = toText strict <> "graph {" <> (joinWith "" $ toText <$> defs) <> "}"
+  toText (DiGraph strict defs) = toText strict <> "digraph {" <> (joinWith "" $ toText <$> defs) <> "}"
+
+digraph :: Array Definition -> Graph
+digraph = DiGraph NonStrict
+
+graph :: Array Definition -> Graph
+graph = Graph NonStrict
+
+strictDigraph :: Array Definition -> Graph
+strictDigraph = DiGraph Strict
+
+strictGraph :: Array Definition -> Graph
+strictGraph = Graph Strict
 
 -- | create graph from Nodes and Edges
 -- | example: `graphFromElements [Node "e" [], Node "d" []] [Edge "e" "f"]`
 graphFromElements :: Array (Node) -> Array (Edge) -> Graph
-graphFromElements n e = DiGraph $ (NodeDef <$> n) <> (EdgeDef <$> e)
+graphFromElements n e = digraph $ (NodeDef <$> n) <> (EdgeDef <$> e)
 
 -- | `a` is a type that can be represented by a Dot-Graph
 class GraphRepr a where
