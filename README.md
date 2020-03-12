@@ -6,7 +6,7 @@ documentation can be found on [pursuit](https://pursuit.purescript.org/packages/
 define your model like this:
 
 ```purescript
-DiGraph [
+digraph [
     node "a" [ Shape Diamond, Style Filled,  Node.FillColor red ],
     node "b" [],
     "a" ==> "b",
@@ -67,6 +67,13 @@ bower i purescript-dotlang
 
 Changelog
 =========
+
+v4.0.0
+------
+
+Breaking Changes:
+
+- Strictness behaviour of the graph is now supported: To **migrate** replace old calls to `DiGraph` with `digraph`
 
 v3.0.0
 ------
