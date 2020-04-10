@@ -22,7 +22,7 @@ main = runTest do
     test "basic test" do
       let
         g = digraph [
-          global [ Global.RankDir FromLeft ],
+          global [ Global.RankDir FromLeft, Global.Concentrate true ],
           node "a" [ Shape Diamond, Style Filled,  Node.FillColor red ],
           node "b" [],
           "a" ==> "b",
@@ -31,7 +31,7 @@ main = runTest do
             node "d" []
           ]
         ]
-      equal "digraph {rankdir=LR; a [shape=diamond, style=filled, fillcolor=\"#f44336\"]; b []; a -> b; a -> d [fillcolor=\"#f44336\"]; subgraph { d []; }}" (toText g)
+      equal "digraph {rankdir=LR; concentrate=true; a [shape=diamond, style=filled, fillcolor=\"#f44336\"]; b []; a -> b; a -> d [fillcolor=\"#f44336\"]; subgraph { d []; }}" (toText g)
     test "examples from documentation" do
       equal (toText $ Edge Forward "a" "b" []) "a -> b"
       equal (toText $ "a" =*> "b" $ [ Edge.FillColor red ]) "a -> b [fillcolor=\"#f44336\"]; "
