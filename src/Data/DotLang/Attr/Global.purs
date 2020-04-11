@@ -45,6 +45,7 @@ instance pageDirValueDotLang :: DotLang PageDirValue where
 data Attr
   = RankDir RankDirValue
   | PageDir PageDirValue
+  | Concentrate Boolean
 
 derive instance genericAttr :: Generic Attr _
 
@@ -54,3 +55,4 @@ instance showAttr :: Show Attr where
 instance attrDotLang :: DotLang Attr where
   toText (RankDir dir) = "rankdir=" <> toText dir
   toText (PageDir dir) = "pagedir=" <> toText dir
+  toText (Concentrate concentrate) = "concentrate=" <> show concentrate
