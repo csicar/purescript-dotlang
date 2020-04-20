@@ -35,3 +35,5 @@ main = runTest do
     test "examples from documentation" do
       equal (toText $ Edge Forward "a" "b" []) "a -> b"
       equal (toText $ "a" =*> "b" $ [ Edge.FillColor red ]) "a -> b [fillcolor=\"#f44336\"]; "
+    test "ArrowHead" $ do
+      equal (toText $ "a" =*> "b" $ [ Edge.ArrowHead Edge.None ]) "a -> b [arrowhead=none]; "
