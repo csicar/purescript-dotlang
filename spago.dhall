@@ -1,5 +1,9 @@
 { name =
     "dotlang"
+, license =
+    "MIT"
+, repository =
+    "https://github.com/csicar/purescript-dotlang.git"
 , dependencies =
     [ "colors"
     , "console"
