@@ -17,6 +17,53 @@ derive instance genericLabel :: Generic LabelValue _
 instance showLabel :: Show LabelValue where
   show = genericShow
 
+data ArrowHeadStyle
+  = Normal
+  | Inv
+  | Dot
+  | InvDot
+  | ODot
+  | InvODot
+  | None
+  | Tee
+  | Empty
+  | InvEmpty
+  | Diamond
+  | ODiamond
+  | EDiamond
+  | Crow
+  | Box
+  | OBox
+  | Open
+  | HalfOpen
+  | Vee
+
+derive instance genericArrowHeadStyle :: Generic ArrowHeadStyle _
+
+instance showArrowHeadStyle :: Show ArrowHeadStyle where
+  show = genericShow
+
+instance arrowHeadStyle :: DotLang ArrowHeadStyle where
+  toText Normal = "normal"
+  toText Inv = "inv"
+  toText Dot = "dot"
+  toText InvDot = "invdot"
+  toText ODot = "odot"
+  toText InvODot = "invodot"
+  toText None = "none"
+  toText Tee = "tee"
+  toText Empty = "empty"
+  toText InvEmpty = "invempty"
+  toText Diamond = "diamond"
+  toText ODiamond = "odiamond"
+  toText EDiamond = "ediamond"
+  toText Crow = "crow"
+  toText Box = "box"
+  toText OBox = "obox"
+  toText Open = "open"
+  toText HalfOpen = "halfopen"
+  toText Vee = "vee"
+
 data Attr
   = Color Color
   | FontColor Color
@@ -25,6 +72,7 @@ data Attr
   | Style FillStyle
   | FillColor Color
   | PenWidth Number
+  | ArrowHead ArrowHeadStyle
 
 derive instance genericAttr :: Generic Attr _
 
@@ -40,6 +88,7 @@ instance attrDotLang :: DotLang Attr where
   toText (Label (HtmlLabel t)) = "label=" <> t
   toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
   toText (PenWidth i) = "penwidth="<> show i
+  toText (ArrowHead s) = "arrowhead=" <> toText s
 
 -- |
 -- | ```purescript
