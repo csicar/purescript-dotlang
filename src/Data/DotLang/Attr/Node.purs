@@ -1,64 +1,117 @@
 module Data.DotLang.Attr.Node where
 
 import Prelude
-
 import Color (Color, toHexString)
-import Data.DotLang.Attr (FillStyle)
-import Data.DotLang.Class (class DotLang, toText)
+import Data.DotLang.Attr (Attribute, FillStyle, LabelValue)
+import Data.DotLang.Class (class DotLang, class DotLangValue, toText, toValue)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
+import Data.Maybe (Maybe(..))
+import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
+import Heterogeneous.Folding (class FoldingWithIndex, class HFoldlWithIndex, hfoldlWithIndex)
+import Prim.RowList (class RowToList)
 
-data LabelValue
-  = TextLabel String
-  | HtmlLabel String
+type NodeAtributes r
+  = ( color :: Maybe Color
+    , margin :: Maybe Int
+    , fontColor :: Maybe Color
+    , fontSize :: Maybe Int
+    , width :: Maybe Int
+    , label :: Maybe LabelValue
+    , shape :: Maybe ShapeType
+    , style :: Maybe FillStyle
+    , fillcolor :: Maybe Color
+    , penWidth :: Maybe Number
+    | r
+    )
 
-derive instance genericLabel :: Generic LabelValue _
+defaultNodeAttributes :: Record (NodeAtributes ())
+defaultNodeAttributes =
+  { color: Nothing
+  , margin: Nothing
+  , fontColor: Nothing
+  , fontSize: Nothing
+  , width: Nothing
+  , label: Nothing
+  , shape: Nothing
+  , style: Nothing
+  , fillcolor: Nothing
+  , penWidth: Nothing
+  }
 
-instance showLabel :: Show LabelValue where
-  show = genericShow
+instance shapeType :: DotLangValue ShapeType where
+  toValue = toText
 
-data Attr
-  = Color Color
-  | Margin Int
-  | FontColor Color
-  | FontSize Int
-  | Width Int
-  | Label LabelValue
-  | Shape ShapeType
-  | Style FillStyle
-  | FillColor Color
-  | PenWidth Number
+style :: ∀ r. FillStyle -> Attribute { style :: Maybe FillStyle | r }
+style v = _ { style = Just v }
 
-derive instance genericAttr :: Generic Attr _
-
-instance showAttr :: Show Attr where
-  show = genericShow
-
-instance attrDotLang :: DotLang Attr where
-  toText (Margin i) = "margin="<> show i
-  toText (Color s) = "color=\"" <> toHexString s <> "\""
-  toText (FontColor s) = "fontcolor=\"" <> toHexString s <> "\""
-  toText (FontSize i) = "fontsize="<> show i
-  toText (Width i) = "width="<> show i
-  toText (Shape t) = "shape="<> toText t
-  toText (Style f) = "style="<> toText f
-  toText (Label (TextLabel t)) = "label=" <> show t
-  toText (Label (HtmlLabel t)) = "label=" <> t
-  toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
-  toText (PenWidth i) = "penwidth="<> show i
+fillColor :: ∀ r. Color -> Attribute { fillcolor :: Maybe Color | r }
+fillColor v = _ { fillcolor = Just v }
 
 -- | possible node shapes
 data ShapeType
-  = Box | Polygon | Ellipse | Oval | Circle | Point | Egg
-  | Triangle | Plaintext | Plain | Diamond | Trapezium | Parallelogram
-  | House | Pentagon | Hexagon | Septagon | Octagon | Doublecircle
-  | Doubleoctagon | Tripleoctagon | Invtriangle | Invtrapezium
-  | Invhouse | Mdiamond | Msquare | Mcircle | Rect | Rectangle | Square
-  | Star | None | Underline | Cylinder | Note | Tab | Folder | Box3d
-  | Component | Promoter | Cds | Terminator | Utr | Primersite | Restrictionsite
-  | Fivepoverhang | Threepoverhang | Noverhang | Assembly | Signature
-  | Insulator | Ribosite | Rnastab | Proteasesite | Proteinstab | Rpromoter
-  | Rarrow | Larrow | Lpromoter
+  = Box
+  | Polygon
+  | Ellipse
+  | Oval
+  | Circle
+  | Point
+  | Egg
+  | Triangle
+  | Plaintext
+  | Plain
+  | Diamond
+  | Trapezium
+  | Parallelogram
+  | House
+  | Pentagon
+  | Hexagon
+  | Septagon
+  | Octagon
+  | Doublecircle
+  | Doubleoctagon
+  | Tripleoctagon
+  | Invtriangle
+  | Invtrapezium
+  | Invhouse
+  | Mdiamond
+  | Msquare
+  | Mcircle
+  | Rect
+  | Rectangle
+  | Square
+  | Star
+  | None
+  | Underline
+  | Cylinder
+  | Note
+  | Tab
+  | Folder
+  | Box3d
+  | Component
+  | Promoter
+  | Cds
+  | Terminator
+  | Utr
+  | Primersite
+  | Restrictionsite
+  | Fivepoverhang
+  | Threepoverhang
+  | Noverhang
+  | Assembly
+  | Signature
+  | Insulator
+  | Ribosite
+  | Rnastab
+  | Proteasesite
+  | Proteinstab
+  | Rpromoter
+  | Rarrow
+  | Larrow
+  | Lpromoter
+
+shape :: ∀ r. ShapeType -> Attribute { shape :: Maybe ShapeType | r }
+shape v = _ { shape = Just v }
 
 derive instance genericShapeType :: Generic ShapeType _
 
@@ -125,19 +178,3 @@ instance dotLangShape :: DotLang ShapeType where
   toText Rarrow = "Rarrow"
   toText Larrow = "Larrow"
   toText Lpromoter = "Lpromoter"
-
--- |
--- | ```purescript
--- | htmlLabel "<table><tr><td>Label</td></tr></table>" -- :: Attr
--- | ```
--- | htmlLabel as a part of an attribute of a node.
-htmlLabel :: String -> Attr
-htmlLabel = HtmlLabel >>> Label
-
--- |
--- | ```purescript
--- | textLabel "..." -- :: Attr
--- | ```
--- | label as a part of an attribute of a node.
-label :: String -> Attr
-label = TextLabel >>> Label

@@ -6,30 +6,44 @@ documentation can be found on [pursuit](https://pursuit.purescript.org/packages/
 define your model like this:
 
 ```purescript
-DiGraph [
-    node "a" [ Shape Diamond, Style Filled,  Node.FillColor red ],
-    node "b" [],
-    "a" ==> "b",
-    "a" =*> "d" $ [ Edge.FillColor red ],
-    Subgraph [
-        node "d" []
+import Data.DotLang.Attr.Global as Global
+import Data.DotLang.Attr.Node
+import Data.DotLang.Attr.Edge
+import Data.DotLang.Attr
+import Data.DotLang.Class (toText)
+import Color.Scheme.MaterialDesign (red)
+
+
+graph = DiGraph
+    [ global [ Global.RankDir FromLeft ]
+    , node "a" [ shape Node.Diamond, style Filled, fillColor red ]
+    , node "b" []
+    , "a" ==> "b"
+    , "a" =*> "d" $ [ fillColor red ]
+    , Subgraph
+        [ node "d" []
+        ]
     ]
-]
 ```
 
 can be rendered using `toText` to:
 
 ```
 digraph {
-    a [shape=diamond, style=filled, fillcolor="#f44336"];
-    b [];
-    a -> b;
-    a -> d [fillcolor="#f44336"];
-    subgraph {
+    rankdir=LR; 
+    a [fillcolor="#f44336", shape=diamond, style=filled]; 
+    b []; 
+    a -> b; 
+    a -> d [fillcolor="#f44336"]; 
+    subgraph { 
         d []; 
     }
 }
 ```
+
+Which looks like this, when rendered with graphviz:
+
+![example.svg](example.svg)
 
 ### Installation
 

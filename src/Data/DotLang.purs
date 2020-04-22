@@ -1,17 +1,23 @@
 module Data.DotLang where
 
+import Prelude
+import Color (Color, toHexString)
+import Data.Array (foldr, null)
+import Data.DotLang.Attr (Attribute, attributesToText, label)
+import Data.DotLang.Attr.Edge (EdgeAttributes, defaultEdgeAttributes)
 import Data.DotLang.Attr.Edge as Edge
-import Data.DotLang.Attr.Node as Node
 import Data.DotLang.Attr.Global as Global
+import Data.DotLang.Attr.Node (NodeAtributes, defaultNodeAttributes)
+import Data.DotLang.Attr.Node as Node
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.String (joinWith)
-import Data.Array (null)
 import Prelude (class Show, ($), (<$>), (<>))
 
 -- | type alias for a Nodes Name
-type Id = String
+type Id
+  = String
 
 -- | Dot-Node
 -- | example :
@@ -19,8 +25,8 @@ type Id = String
 -- | Node "e" [Margin 3, Label "some label"]
 -- | ```
 -- | is turned into: `e [margin=3, label="some label"];`
-data Node = Node Id (Array Node.Attr)
-
+data Node
+  = Node Id { | NodeAtributes () }
 
 -- | get a nodes id
 -- | example:
@@ -33,7 +39,7 @@ nodeId (Node id _) = id
 -- | change Nodes id to a new one; keeing the old id as the label
 -- | example: `mapNodeId (\a -> a+"!") (Node "e" []) == Node "e!" [Label "e"]`
 changeNodeId :: (Id -> Id) -> Node -> Node
-changeNodeId f (Node id attr) = Node (f id) $ attr <> [Node.label id]
+changeNodeId f (Node id attr) = Node (f id) $ (label id attr)
 
 derive instance genericNode :: Generic Node _
 
@@ -41,8 +47,7 @@ instance showNode :: Show Node where
   show = genericShow
 
 instance nodeDotLang :: DotLang Node where
-  toText (Node id attrs) = id <> " [" <> joinWith ", " (toText <$> attrs) <> "]"
-
+  toText (Node id attrs) = id <> " [" <> joinWith ", " (attributesToText attrs) <> "]"
 
 data EdgeType
   = Forward
@@ -51,7 +56,8 @@ data EdgeType
 
 derive instance genericEdgeType :: Generic EdgeType _
 
-instance showEdgeType :: Show EdgeType where show = genericShow
+instance showEdgeType :: Show EdgeType where
+  show = genericShow
 
 instance dotLangEdgeType :: DotLang EdgeType where
   toText Forward = "->"
@@ -61,7 +67,8 @@ instance dotLangEdgeType :: DotLang EdgeType where
 -- | egde from id to id
 -- | `toText $ Edge Forward "a" "b" []` == `a -> b []`
 -- | EdgeType determines the direction of the arrow
-data Edge = Edge EdgeType Id Id (Array Edge.Attr)
+data Edge
+  = Edge EdgeType Id Id { | EdgeAttributes () }
 
 derive instance genericEdge :: Generic Edge _
 
@@ -71,7 +78,9 @@ instance showEdge :: Show Edge where
 instance dotLangEdge :: DotLang Edge where
   toText (Edge e id id2 attrs) = id <> " " <> (toText e) <> " " <> id2 <> attrText
     where
-      attrText = if null attrs then "" else " [" <> joinWith ", " (toText <$> attrs) <> "]"
+    attrText = case attributesToText attrs of
+      [] -> ""
+      textAttributes -> " [" <> joinWith ", " textAttributes <> "]"
 
 -- | definition in a graph
 data Definition
@@ -79,6 +88,12 @@ data Definition
   | NodeDef Node
   | EdgeDef Edge
   | Subgraph (Array Definition)
+
+
+derive instance genericDefinition :: Generic Definition _
+
+instance showDefinition :: Show Definition where
+  show a = genericShow a
 
 -- |
 -- | ```purescript
@@ -93,8 +108,8 @@ global = Global
 -- | node "a" [] -- ∷ Definition
 -- | ```
 -- | node as a part of a definition
-node :: Id → Array Node.Attr → Definition
-node id attrs = NodeDef $ Node id attrs
+node :: Id → Array (Attribute { | NodeAtributes () }) → Definition
+node id attrs = NodeDef $ Node id (foldr ($) defaultNodeAttributes $ attrs)
 
 -- |
 -- | ```purescript
@@ -102,22 +117,22 @@ node id attrs = NodeDef $ Node id attrs
 -- | ```
 -- | edge as a part of a definition. 
 -- | `==>` and `=*>` can also be used for that purpose.
-edge :: EdgeType → Id → Id → Array Edge.Attr → Definition
-edge t id id2 attrs = EdgeDef $ Edge t id id2 attrs
+edge :: EdgeType → Id → Id → Array (Attribute { | EdgeAttributes () }) → Definition
+edge t id id2 attrs = EdgeDef $ Edge t id id2 (foldr ($) defaultEdgeAttributes $ attrs)
 
-forwardEdgeWithAttrs ∷ Id → Id → Array Edge.Attr → Definition
+forwardEdgeWithAttrs ∷ Id → Id → Array (Attribute { | EdgeAttributes () }) → Definition
 forwardEdgeWithAttrs = edge Forward
 
 forwardEdge :: Id → Id → Definition
 forwardEdge l r = forwardEdgeWithAttrs l r []
 
-backwardEdgeWithAttrs ∷ Id → Id → Array Edge.Attr → Definition
+backwardEdgeWithAttrs ∷ Id → Id → Array (Attribute { | EdgeAttributes () }) → Definition
 backwardEdgeWithAttrs = edge Backward
 
 backwardEdge ∷ Id → Id → Definition
 backwardEdge l r = backwardEdgeWithAttrs l r []
 
-normalEdgeWithAttrs ∷ Id → Id → Array Edge.Attr → Definition
+normalEdgeWithAttrs ∷ Id → Id → Array (Attribute { | EdgeAttributes () }) → Definition
 normalEdgeWithAttrs = edge NoDir
 
 normalEdge ∷ Id → Id → Definition
@@ -129,6 +144,7 @@ normalEdge l r = normalEdgeWithAttrs l r []
 -- | ```
 -- | Forward edge as as a definition
 infix 5 forwardEdge as ==>
+
 -- |
 -- | ```purescript
 -- | "a" =*> "b" $ [ Edge.FillColor red ]
@@ -136,24 +152,28 @@ infix 5 forwardEdge as ==>
 -- | ```
 -- | Forward edge with attributes as a definition
 infix 5 forwardEdgeWithAttrs as =*>
+
 -- |
 -- | ```purescript
 -- | "a" <== "b" -- :: Definition
 -- | ```
 -- | Backward edge as a definition
 infix 5 backwardEdge as <==
+
 -- |
 -- | ```purescript
 -- | "a" <*= "b" $ [ Edge.FillColor red ]
 -- | ```
 -- | Backward edge with attributes as a definition
 infix 5 backwardEdgeWithAttrs as <*=
+
 -- |
 -- | ```purescript
 -- | "a" -==- "b"
 -- | ```
 -- | Normal edge as definition
 infix 5 normalEdge as -==-
+
 -- |
 -- | ```purescript
 -- | "a" =*= "b" $ [ Edge.FillColor red ]
@@ -172,6 +192,10 @@ data Graph
   = Graph (Array Definition)
   | DiGraph (Array Definition)
 
+derive instance genericGraph :: Generic Graph _
+
+instance showGraph :: Show Graph where
+  show = genericShow
 
 instance graphDotLang :: DotLang Graph where
   toText (Graph defs) = "graph {" <> (joinWith "" $ toText <$> defs) <> "}"
@@ -185,5 +209,3 @@ graphFromElements n e = DiGraph $ (NodeDef <$> n) <> (EdgeDef <$> e)
 -- | `a` is a type that can be represented by a Dot-Graph
 class GraphRepr a where
   toGraph :: a -> Graph
-
-
