@@ -1,12 +1,13 @@
 module Data.DotLang.Attr.Edge where
 
 import Prelude
-import Color (Color)
-import Data.DotLang.Attr (FillStyle, Attribute, LabelValue)
+import Data.DotLang.Attr (Attribute)
+import Data.DotLang.Attr.Common as Common
 import Data.DotLang.Class (class DotLangValue)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(..))
+import Record as Record
 
 data ArrowHeadStyle
   = Normal
@@ -58,26 +59,14 @@ instance arrowHeadStyleValue :: DotLangValue ArrowHeadStyle where
 arrowHead :: ∀ r. ArrowHeadStyle -> Attribute { arrowhead :: Maybe ArrowHeadStyle | r }
 arrowHead v = _ { arrowhead = Just v }
 
-type EdgeAttributes r
-  = ( color :: Maybe Color
-    , fontcolor :: Maybe Color
-    , fontsize :: Maybe Int
-    , label :: Maybe LabelValue
-    , style :: Maybe FillStyle
-    , fillcolor :: Maybe Color
-    , penwidth :: Maybe Number
-    , arrowhead :: Maybe ArrowHeadStyle
-    | r
-    )
+type Attributes
+  = Common.Attributes
+      ( arrowhead :: Maybe ArrowHeadStyle
+      )
 
-defaultEdgeAttributes :: Record (EdgeAttributes ())
-defaultEdgeAttributes =
-  { color: Nothing
-  , fontcolor: Nothing
-  , fontsize: Nothing
-  , label: Nothing
-  , style: Nothing
-  , fillcolor: Nothing
-  , penwidth: Nothing
-  , arrowhead: Nothing
-  }
+defaultAttributes :: Record Attributes
+defaultAttributes =
+  Common.defaultAttributes
+    `Record.disjointUnion`
+      { arrowhead: Nothing
+      }

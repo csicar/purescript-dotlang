@@ -3,16 +3,17 @@ module Data.DotLang where
 import Prelude
 import Color (Color, toHexString)
 import Data.Array (foldr, null)
-import Data.DotLang.Attr (Attribute, attributesToText, label)
-import Data.DotLang.Attr.Edge (EdgeAttributes, defaultEdgeAttributes)
+import Data.DotLang.Attr (Attribute, attributesToText)
+import Data.DotLang.Attr.Common (label)
+import Data.DotLang.Attr.Common as Gloabl
 import Data.DotLang.Attr.Edge as Edge
 import Data.DotLang.Attr.Global as Global
-import Data.DotLang.Attr.Node (NodeAtributes, defaultNodeAttributes)
 import Data.DotLang.Attr.Node as Node
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.String (joinWith)
+import Data.Symbol (SProxy(..))
 import Prelude (class Show, ($), (<$>), (<>))
 
 -- | type alias for a Nodes Name
@@ -26,7 +27,7 @@ type Id
 -- | ```
 -- | is turned into: `e [margin=3, label="some label"];`
 data Node
-  = Node Id { | NodeAtributes () }
+  = Node Id { | Node.Attributes }
 
 -- | get a nodes id
 -- | example:
@@ -68,7 +69,7 @@ instance dotLangEdgeType :: DotLang EdgeType where
 -- | `toText $ Edge Forward "a" "b" []` == `a -> b []`
 -- | EdgeType determines the direction of the arrow
 data Edge
-  = Edge EdgeType Id Id { | EdgeAttributes () }
+  = Edge EdgeType Id Id { | Edge.Attributes }
 
 derive instance genericEdge :: Generic Edge _
 
@@ -84,11 +85,10 @@ instance dotLangEdge :: DotLang Edge where
 
 -- | definition in a graph
 data Definition
-  = Global (Array Global.Attr)
+  = Global { | Global.Attributes }
   | NodeDef Node
   | EdgeDef Edge
   | Subgraph (Array Definition)
-
 
 derive instance genericDefinition :: Generic Definition _
 
@@ -100,16 +100,16 @@ instance showDefinition :: Show Definition where
 -- | global [ Global.RankDir  Global.FromLeft ] -- ∷ Definition
 -- | ```
 -- | global as a part of a definition
-global :: Array Global.Attr -> Definition
-global = Global
+global :: Array (Attribute { | Global.Attributes }) -> Definition
+global = (foldr ($) Global.defaultAttributes) >>> Global
 
 -- |
 -- | ```purescript
 -- | node "a" [] -- ∷ Definition
 -- | ```
 -- | node as a part of a definition
-node :: Id → Array (Attribute { | NodeAtributes () }) → Definition
-node id attrs = NodeDef $ Node id (foldr ($) defaultNodeAttributes $ attrs)
+node :: Id → Array (Attribute { | Node.Attributes }) → Definition
+node id attrs = NodeDef $ Node id (foldr ($) Node.defaultAttributes $ attrs)
 
 -- |
 -- | ```purescript
@@ -117,22 +117,22 @@ node id attrs = NodeDef $ Node id (foldr ($) defaultNodeAttributes $ attrs)
 -- | ```
 -- | edge as a part of a definition. 
 -- | `==>` and `=*>` can also be used for that purpose.
-edge :: EdgeType → Id → Id → Array (Attribute { | EdgeAttributes () }) → Definition
-edge t id id2 attrs = EdgeDef $ Edge t id id2 (foldr ($) defaultEdgeAttributes $ attrs)
+edge :: EdgeType → Id → Id → Array (Attribute { | Edge.Attributes }) → Definition
+edge t id id2 attrs = EdgeDef $ Edge t id id2 (foldr ($) Edge.defaultAttributes $ attrs)
 
-forwardEdgeWithAttrs ∷ Id → Id → Array (Attribute { | EdgeAttributes () }) → Definition
+forwardEdgeWithAttrs ∷ Id → Id → Array (Attribute { | Edge.Attributes }) → Definition
 forwardEdgeWithAttrs = edge Forward
 
 forwardEdge :: Id → Id → Definition
 forwardEdge l r = forwardEdgeWithAttrs l r []
 
-backwardEdgeWithAttrs ∷ Id → Id → Array (Attribute { | EdgeAttributes () }) → Definition
+backwardEdgeWithAttrs ∷ Id → Id → Array (Attribute { | Edge.Attributes }) → Definition
 backwardEdgeWithAttrs = edge Backward
 
 backwardEdge ∷ Id → Id → Definition
 backwardEdge l r = backwardEdgeWithAttrs l r []
 
-normalEdgeWithAttrs ∷ Id → Id → Array (Attribute { | EdgeAttributes () }) → Definition
+normalEdgeWithAttrs ∷ Id → Id → Array (Attribute { | Edge.Attributes }) → Definition
 normalEdgeWithAttrs = edge NoDir
 
 normalEdge ∷ Id → Id → Definition
@@ -182,7 +182,7 @@ infix 5 normalEdge as -==-
 infix 5 normalEdgeWithAttrs as =*=
 
 instance definitionDotlang :: DotLang Definition where
-  toText (Global attrs) = joinWith "; " (toText <$> attrs) <> "; "
+  toText (Global attrs) = joinWith "; " (attributesToText attrs) <> "; "
   toText (NodeDef n) = toText n <> "; "
   toText (EdgeDef e) = toText e <> "; "
   toText (Subgraph defs) = "subgraph { " <> (joinWith "" $ toText <$> defs) <> "}"

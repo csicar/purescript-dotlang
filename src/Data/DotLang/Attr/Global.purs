@@ -1,10 +1,25 @@
 module Data.DotLang.Attr.Global where
 
 import Prelude
-
-import Data.DotLang.Class (class DotLang, toText)
+import Data.DotLang.Attr (Attribute, attributesToText)
+import Data.DotLang.Class (class DotLangValue, toValue)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
+import Data.Maybe (Maybe(..))
+
+type Attributes
+  = ( rankDir :: Maybe RankDirValue
+    , pageDir :: Maybe PageDirValue
+    )
+
+defaultAttributes :: { | Attributes }
+defaultAttributes = { rankDir: Nothing, pageDir: Nothing }
+
+rankDir :: RankDirValue -> Attribute { | Attributes }
+rankDir v = _ { rankDir = Just v }
+
+pageDir :: PageDirValue -> Attribute { | Attributes }
+pageDir v = _ { pageDir = Just v }
 
 data RankDirValue
   = FromTop
@@ -17,40 +32,35 @@ derive instance genericRankDirVal :: Generic RankDirValue _
 instance showRankDirValue :: Show RankDirValue where
   show = genericShow
 
-instance rankDirValueDotLang :: DotLang RankDirValue where
-  toText FromTop = "TB"
-  toText FromLeft = "LR"
-  toText FromBottom = "BT"
-  toText FromRight = "RL"
+instance rankDirValueDotLangValue :: DotLangValue RankDirValue where
+  toValue FromTop = "TB"
+  toValue FromLeft = "LR"
+  toValue FromBottom = "BT"
+  toValue FromRight = "RL"
 
 -- | Upper-case first character is major order;
 -- | lower-case second character is minor order.
-data PageDirValue = Bl | Br | Tl | Tr | Rb | Rt | Lb | Lt
+data PageDirValue
+  = Bl
+  | Br
+  | Tl
+  | Tr
+  | Rb
+  | Rt
+  | Lb
+  | Lt
 
 derive instance genericPageDirValue :: Generic PageDirValue _
 
 instance showPageDirValue :: Show PageDirValue where
   show = genericShow
 
-instance pageDirValueDotLang :: DotLang PageDirValue where
-  toText Bl = "BL"
-  toText Br = "BR"
-  toText Tl = "TL"
-  toText Tr = "TR"
-  toText Rb = "RB"
-  toText Rt = "RT"
-  toText Lb = "LB"
-  toText Lt = "LT"
-
-data Attr
-  = RankDir RankDirValue
-  | PageDir PageDirValue
-
-derive instance genericAttr :: Generic Attr _
-
-instance showAttr :: Show Attr where
-  show = genericShow
-
-instance attrDotLang :: DotLang Attr where
-  toText (RankDir dir) = "rankdir=" <> toText dir
-  toText (PageDir dir) = "pagedir=" <> toText dir
+instance pageDirValueDotLangValue :: DotLangValue PageDirValue where
+  toValue Bl = "BL"
+  toValue Br = "BR"
+  toValue Tl = "TL"
+  toValue Tr = "TR"
+  toValue Rb = "RB"
+  toValue Rt = "RT"
+  toValue Lb = "LB"
+  toValue Lt = "LT"

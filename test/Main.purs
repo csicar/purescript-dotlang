@@ -1,14 +1,14 @@
 module Test.Main where
 
 import Prelude
+
 import Color.Scheme.MaterialDesign (red)
 import Data.DotLang (Definition(..), Edge(..), EdgeType(..), Graph(..), edge, global, node, (=*>), (==>))
-import Data.DotLang.Attr (FillStyle(..))
+import Data.DotLang.Attr.Common (FillStyle(..), fillColor, style)
 import Data.DotLang.Attr.Edge (arrowHead)
 import Data.DotLang.Attr.Edge as Edge
-import Data.DotLang.Attr.Global (RankDirValue(..))
-import Data.DotLang.Attr.Global as Global
-import Data.DotLang.Attr.Node (shape, style, fillColor, ShapeType(..))
+import Data.DotLang.Attr.Global (RankDirValue(..), rankDir)
+import Data.DotLang.Attr.Node (shape)
 import Data.DotLang.Attr.Node as Node
 import Data.DotLang.Class (toText)
 import Effect (Effect)
@@ -24,8 +24,8 @@ main =
         let
           g =
             DiGraph
-              [ global [ Global.RankDir FromLeft ]
-              , node "a" [ shape Diamond, style Filled, fillColor red ]
+              [ global [ rankDir FromLeft ]
+              , node "a" [ shape Node.Diamond, style Filled, fillColor red ]
               , node "b" []
               , "a" ==> "b"
               , "a" =*> "d" $ [ fillColor red ]
