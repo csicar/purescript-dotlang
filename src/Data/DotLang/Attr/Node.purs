@@ -1,143 +1,158 @@
 module Data.DotLang.Attr.Node where
 
-import Prelude
-
-import Color (Color, toHexString)
-import Data.DotLang.Attr (FillStyle)
-import Data.DotLang.Class (class DotLang, toText)
+import Prelude (class Show)
+import Color (Color)
+import Data.DotLang.Attr (Attribute)
+import Data.DotLang.Attr.Common as Common
+import Data.DotLang.Class (class DotLang, class DotLangValue, toText)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
+import Data.Maybe (Maybe(..))
+import Record as Record
 
-data LabelValue
-  = TextLabel String
-  | HtmlLabel String
+type Attributes
+  = Common.Attributes
+      ( margin :: Maybe Int
+      , width :: Maybe Int
+      , shape :: Maybe ShapeType
+      )
 
-derive instance genericLabel :: Generic LabelValue _
-
-instance showLabel :: Show LabelValue where
-  show = genericShow
-
-data Attr
-  = Color Color
-  | Margin Int
-  | FontColor Color
-  | FontSize Int
-  | Width Int
-  | Label LabelValue
-  | Shape ShapeType
-  | Style FillStyle
-  | FillColor Color
-  | PenWidth Number
-
-derive instance genericAttr :: Generic Attr _
-
-instance showAttr :: Show Attr where
-  show = genericShow
-
-instance attrDotLang :: DotLang Attr where
-  toText (Margin i) = "margin="<> show i
-  toText (Color s) = "color=\"" <> toHexString s <> "\""
-  toText (FontColor s) = "fontcolor=\"" <> toHexString s <> "\""
-  toText (FontSize i) = "fontsize="<> show i
-  toText (Width i) = "width="<> show i
-  toText (Shape t) = "shape="<> toText t
-  toText (Style f) = "style="<> toText f
-  toText (Label (TextLabel t)) = "label=" <> show t
-  toText (Label (HtmlLabel t)) = "label=" <> t
-  toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
-  toText (PenWidth i) = "penwidth="<> show i
+defaultAttributes :: { | Attributes }
+defaultAttributes =
+  Common.defaultAttributes
+    `Record.disjointUnion`
+      { margin: Nothing
+      , width: Nothing
+      , shape: Nothing
+      }
 
 -- | possible node shapes
 data ShapeType
-  = Box | Polygon | Ellipse | Oval | Circle | Point | Egg
-  | Triangle | Plaintext | Plain | Diamond | Trapezium | Parallelogram
-  | House | Pentagon | Hexagon | Septagon | Octagon | Doublecircle
-  | Doubleoctagon | Tripleoctagon | Invtriangle | Invtrapezium
-  | Invhouse | Mdiamond | Msquare | Mcircle | Rect | Rectangle | Square
-  | Star | None | Underline | Cylinder | Note | Tab | Folder | Box3d
-  | Component | Promoter | Cds | Terminator | Utr | Primersite | Restrictionsite
-  | Fivepoverhang | Threepoverhang | Noverhang | Assembly | Signature
-  | Insulator | Ribosite | Rnastab | Proteasesite | Proteinstab | Rpromoter
-  | Rarrow | Larrow | Lpromoter
+  = Box
+  | Polygon
+  | Ellipse
+  | Oval
+  | Circle
+  | Point
+  | Egg
+  | Triangle
+  | Plaintext
+  | Plain
+  | Diamond
+  | Trapezium
+  | Parallelogram
+  | House
+  | Pentagon
+  | Hexagon
+  | Septagon
+  | Octagon
+  | Doublecircle
+  | Doubleoctagon
+  | Tripleoctagon
+  | Invtriangle
+  | Invtrapezium
+  | Invhouse
+  | Mdiamond
+  | Msquare
+  | Mcircle
+  | Rect
+  | Rectangle
+  | Square
+  | Star
+  | None
+  | Underline
+  | Cylinder
+  | Note
+  | Tab
+  | Folder
+  | Box3d
+  | Component
+  | Promoter
+  | Cds
+  | Terminator
+  | Utr
+  | Primersite
+  | Restrictionsite
+  | Fivepoverhang
+  | Threepoverhang
+  | Noverhang
+  | Assembly
+  | Signature
+  | Insulator
+  | Ribosite
+  | Rnastab
+  | Proteasesite
+  | Proteinstab
+  | Rpromoter
+  | Rarrow
+  | Larrow
+  | Lpromoter
+
+shape :: ∀ r. ShapeType -> Attribute { shape :: Maybe ShapeType | r }
+shape v = _ { shape = Just v }
 
 derive instance genericShapeType :: Generic ShapeType _
 
 instance showShapeType :: Show ShapeType where
   show = genericShow
 
-instance dotLangShape :: DotLang ShapeType where
-  toText Box = "box"
-  toText Polygon = "polygon"
-  toText Ellipse = "ellipse"
-  toText Oval = "oval"
-  toText Circle = "circle"
-  toText Point = "point"
-  toText Egg = "egg"
-  toText Triangle = "triangle"
-  toText Plaintext = "plaintext"
-  toText Plain = "plain"
-  toText Diamond = "diamond"
-  toText Trapezium = "trapezium"
-  toText Parallelogram = "parallelogram"
-  toText House = "house"
-  toText Pentagon = "pentagon"
-  toText Hexagon = "hexagon"
-  toText Septagon = "septagon"
-  toText Octagon = "octagon"
-  toText Doublecircle = "doublecircle"
-  toText Doubleoctagon = "doubleoctagon"
-  toText Tripleoctagon = "tripleoctagon"
-  toText Invtriangle = "invtriangle"
-  toText Invtrapezium = "invtrapezium"
-  toText Invhouse = "invhouse"
-  toText Mdiamond = "mdiamond"
-  toText Msquare = "msquare"
-  toText Mcircle = "mcircle"
-  toText Rect = "rect"
-  toText Rectangle = "rectangle"
-  toText Square = "square"
-  toText Star = "star"
-  toText None = "none"
-  toText Underline = "underline"
-  toText Cylinder = "cylinder"
-  toText Note = "note"
-  toText Tab = "tab"
-  toText Folder = "folder"
-  toText Box3d = "box3d"
-  toText Component = "component"
-  toText Promoter = "promoter"
-  toText Cds = "cds"
-  toText Terminator = "terminator"
-  toText Utr = "utr"
-  toText Primersite = "primersite"
-  toText Restrictionsite = "restrictionsite"
-  toText Fivepoverhang = "fivepoverhang"
-  toText Threepoverhang = "threepoverhang"
-  toText Noverhang = "noverhang"
-  toText Assembly = "assembly"
-  toText Signature = "signature"
-  toText Insulator = "insulator"
-  toText Ribosite = "ribosite"
-  toText Rnastab = "rnastab"
-  toText Proteasesite = "proteasesite"
-  toText Proteinstab = "proteinstab"
-  toText Rpromoter = "rpromoter"
-  toText Rarrow = "Rarrow"
-  toText Larrow = "Larrow"
-  toText Lpromoter = "Lpromoter"
-
--- |
--- | ```purescript
--- | htmlLabel "<table><tr><td>Label</td></tr></table>" -- :: Attr
--- | ```
--- | htmlLabel as a part of an attribute of a node.
-htmlLabel :: String -> Attr
-htmlLabel = HtmlLabel >>> Label
-
--- |
--- | ```purescript
--- | textLabel "..." -- :: Attr
--- | ```
--- | label as a part of an attribute of a node.
-label :: String -> Attr
-label = TextLabel >>> Label
+instance dotLangShape :: DotLangValue ShapeType where
+  toValue Box = "box"
+  toValue Polygon = "polygon"
+  toValue Ellipse = "ellipse"
+  toValue Oval = "oval"
+  toValue Circle = "circle"
+  toValue Point = "point"
+  toValue Egg = "egg"
+  toValue Triangle = "triangle"
+  toValue Plaintext = "plaintext"
+  toValue Plain = "plain"
+  toValue Diamond = "diamond"
+  toValue Trapezium = "trapezium"
+  toValue Parallelogram = "parallelogram"
+  toValue House = "house"
+  toValue Pentagon = "pentagon"
+  toValue Hexagon = "hexagon"
+  toValue Septagon = "septagon"
+  toValue Octagon = "octagon"
+  toValue Doublecircle = "doublecircle"
+  toValue Doubleoctagon = "doubleoctagon"
+  toValue Tripleoctagon = "tripleoctagon"
+  toValue Invtriangle = "invtriangle"
+  toValue Invtrapezium = "invtrapezium"
+  toValue Invhouse = "invhouse"
+  toValue Mdiamond = "mdiamond"
+  toValue Msquare = "msquare"
+  toValue Mcircle = "mcircle"
+  toValue Rect = "rect"
+  toValue Rectangle = "rectangle"
+  toValue Square = "square"
+  toValue Star = "star"
+  toValue None = "none"
+  toValue Underline = "underline"
+  toValue Cylinder = "cylinder"
+  toValue Note = "note"
+  toValue Tab = "tab"
+  toValue Folder = "folder"
+  toValue Box3d = "box3d"
+  toValue Component = "component"
+  toValue Promoter = "promoter"
+  toValue Cds = "cds"
+  toValue Terminator = "terminator"
+  toValue Utr = "utr"
+  toValue Primersite = "primersite"
+  toValue Restrictionsite = "restrictionsite"
+  toValue Fivepoverhang = "fivepoverhang"
+  toValue Threepoverhang = "threepoverhang"
+  toValue Noverhang = "noverhang"
+  toValue Assembly = "assembly"
+  toValue Signature = "signature"
+  toValue Insulator = "insulator"
+  toValue Ribosite = "ribosite"
+  toValue Rnastab = "rnastab"
+  toValue Proteasesite = "proteasesite"
+  toValue Proteinstab = "proteinstab"
+  toValue Rpromoter = "rpromoter"
+  toValue Rarrow = "Rarrow"
+  toValue Larrow = "Larrow"
+  toValue Lpromoter = "Lpromoter"
