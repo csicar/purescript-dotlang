@@ -6,10 +6,10 @@ import Color.Scheme.MaterialDesign (red)
 import Data.DotLang (Definition(..), Edge(..), EdgeType(..), Graph(..), edge, global, node, (=*>), (==>))
 import Data.DotLang.Attr.Common (FillStyle(..), fillColor, style)
 import Data.DotLang.Attr.Edge (arrowHead)
-import Data.DotLang.Attr.Edge as Edge
 import Data.DotLang.Attr.Global (RankDirValue(..), rankDir)
 import Data.DotLang.Attr.Node (shape)
 import Data.DotLang.Attr.Node as Node
+import Data.DotLang.Attr.Edge as Edge
 import Data.DotLang.Class (toText)
 import Effect (Effect)
 import Test.Unit (suite, test)

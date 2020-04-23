@@ -1,10 +1,10 @@
-module Data.DotLang.Attr.Node where
+module Data.DotLang.Attr.Node (module Export, shape, ShapeType(..), margin, width, Attributes, defaultAttributes) where
 
 import Prelude (class Show)
-import Color (Color)
 import Data.DotLang.Attr (Attribute)
+import Data.DotLang.Attr.Common (FillStyle(..), LabelValue(..), color, fillColor, fontColor, fontSize, htmlLabel, label, penWidth, style) as Export
 import Data.DotLang.Attr.Common as Common
-import Data.DotLang.Class (class DotLang, class DotLangValue, toText)
+import Data.DotLang.Class (class DotLangValue)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(..))
@@ -25,6 +25,15 @@ defaultAttributes =
       , width: Nothing
       , shape: Nothing
       }
+
+shape :: ShapeType -> Attribute { | Attributes }
+shape v = _ { shape = Just v }
+
+margin :: Int -> Attribute { | Attributes }
+margin v = _ { margin = Just v }
+
+width :: Int -> Attribute { | Attributes }
+width v = _ { width = Just v }
 
 -- | possible node shapes
 data ShapeType
@@ -87,9 +96,6 @@ data ShapeType
   | Rarrow
   | Larrow
   | Lpromoter
-
-shape :: ∀ r. ShapeType -> Attribute { shape :: Maybe ShapeType | r }
-shape v = _ { shape = Just v }
 
 derive instance genericShapeType :: Generic ShapeType _
 

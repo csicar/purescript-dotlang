@@ -12,8 +12,8 @@ import Data.Maybe (Maybe(..))
 
 type Attributes r
   = ( color :: Maybe Color
-    , fontColor :: Maybe Color
-    , fontSize :: Maybe Int
+    , fontcolor :: Maybe Color
+    , fontsize :: Maybe Int
     , label :: Maybe LabelValue
     , style :: Maybe FillStyle
     , fillcolor :: Maybe Color
@@ -24,8 +24,8 @@ type Attributes r
 defaultAttributes :: { | Attributes () }
 defaultAttributes =
   { color: Nothing
-  , fontColor: Nothing
-  , fontSize: Nothing
+  , fontcolor: Nothing
+  , fontsize: Nothing
   , label: Nothing
   , style: Nothing
   , fillcolor: Nothing
@@ -38,11 +38,11 @@ color v = _ { color = Just v }
 
 
 fontColor :: ∀ r. Color -> Attribute { | Attributes r }
-fontColor v = _ { fontColor = Just v }
+fontColor v = _ { fontcolor = Just v }
 
 
 fontSize :: ∀ r. Int -> Attribute { | Attributes r }
-fontSize v = _ { fontSize = Just v }
+fontSize v = _ { fontsize = Just v }
 
 
 style :: ∀ r. FillStyle -> Attribute { | Attributes r }

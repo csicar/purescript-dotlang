@@ -1,6 +1,7 @@
 module Data.DotLang where
 
 import Prelude
+
 import Color (Color, toHexString)
 import Data.Array (foldr, null)
 import Data.DotLang.Attr (Attribute, attributesToText)

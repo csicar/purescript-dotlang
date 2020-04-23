@@ -8,18 +8,18 @@ import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(..))
 
 type Attributes
-  = ( rankDir :: Maybe RankDirValue
-    , pageDir :: Maybe PageDirValue
+  = ( rankdir :: Maybe RankDirValue
+    , pagedir :: Maybe PageDirValue
     )
 
 defaultAttributes :: { | Attributes }
-defaultAttributes = { rankDir: Nothing, pageDir: Nothing }
+defaultAttributes = { rankdir: Nothing, pagedir: Nothing }
 
 rankDir :: RankDirValue -> Attribute { | Attributes }
-rankDir v = _ { rankDir = Just v }
+rankDir v = _ { rankdir = Just v }
 
 pageDir :: PageDirValue -> Attribute { | Attributes }
-pageDir v = _ { pageDir = Just v }
+pageDir v = _ { pagedir = Just v }
 
 data RankDirValue
   = FromTop

@@ -1,12 +1,8 @@
-module Data.DotLang.Attr where
+module Data.DotLang.Attr (Attribute, attributesToText, FoldToDotLang()) where
 
 import Prelude
 
-import Data.DotLang.Class (class DotLang, class DotLangValue)
-import Data.DotLang.Class (class DotLang, class DotLangValue, toValue)
-import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Eq (genericEq)
-import Data.Generic.Rep.Show (genericShow)
+import Data.DotLang.Class (class DotLangValue, toValue)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
 import Heterogeneous.Folding (class FoldingWithIndex, class HFoldlWithIndex, hfoldlWithIndex)
