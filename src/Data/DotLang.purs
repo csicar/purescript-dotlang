@@ -24,7 +24,7 @@ type Id
 -- | Dot-Node
 -- | example :
 -- | ```purescript
--- | Node "e" [Margin 3, Label "some label"]
+-- | node "e" [margin 3, label "some label"]
 -- | ```
 -- | is turned into: `e [margin=3, label="some label"];`
 data Node
@@ -33,13 +33,13 @@ data Node
 -- | get a nodes id
 -- | example:
 -- | ```purescript
--- | nodeId (Node "e" [Label "foo"]) == "e"
+-- | nodeId (node "e" [label "foo"]) == "e"
 -- | ```
 nodeId :: Node -> Id
 nodeId (Node id _) = id
 
 -- | change Nodes id to a new one; keeing the old id as the label
--- | example: `mapNodeId (\a -> a+"!") (Node "e" []) == Node "e!" [Label "e"]`
+-- | example: `mapNodeId (\a -> a+"!") (node "e" []) == node "e!" [label "e"]`
 changeNodeId :: (Id -> Id) -> Node -> Node
 changeNodeId f (Node id attr) = Node (f id) $ (label id attr)
 
@@ -67,7 +67,7 @@ instance dotLangEdgeType :: DotLang EdgeType where
   toText NoDir = "--"
 
 -- | egde from id to id
--- | `toText $ Edge Forward "a" "b" []` == `a -> b []`
+-- | `toText $ edge Forward "a" "b" []` == `a -> b []`
 -- | EdgeType determines the direction of the arrow
 data Edge
   = Edge EdgeType Id Id { | Edge.Attributes }
@@ -98,7 +98,7 @@ instance showDefinition :: Show Definition where
 
 -- |
 -- | ```purescript
--- | global [ Global.RankDir  Global.FromLeft ] -- ∷ Definition
+-- | global [ Global.rankDir  Global.FromLeft ] -- ∷ Definition
 -- | ```
 -- | global as a part of a definition
 global :: Array (Attribute { | Global.Attributes }) -> Definition
@@ -148,7 +148,7 @@ infix 5 forwardEdge as ==>
 
 -- |
 -- | ```purescript
--- | "a" =*> "b" $ [ Edge.FillColor red ]
+-- | "a" =*> "b" $ [ fillColor red ]
 -- | -- toText will be: a -> b [fillcolor="#f44336"];
 -- | ```
 -- | Forward edge with attributes as a definition
@@ -163,7 +163,7 @@ infix 5 backwardEdge as <==
 
 -- |
 -- | ```purescript
--- | "a" <*= "b" $ [ Edge.FillColor red ]
+-- | "a" <*= "b" $ [ fillColor red ]
 -- | ```
 -- | Backward edge with attributes as a definition
 infix 5 backwardEdgeWithAttrs as <*=
@@ -177,7 +177,7 @@ infix 5 normalEdge as -==-
 
 -- |
 -- | ```purescript
--- | "a" =*= "b" $ [ Edge.FillColor red ]
+-- | "a" =*= "b" $ [ fillColor red ]
 -- | ```
 -- | Normal edge with attibutes
 infix 5 normalEdgeWithAttrs as =*=

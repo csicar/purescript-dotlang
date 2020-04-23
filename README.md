@@ -15,7 +15,7 @@ import Color.Scheme.MaterialDesign (red)
 
 
 graph = DiGraph
-    [ global [ Global.RankDir FromLeft ]
+    [ global [ rankDir FromLeft ]
     , node "a" [ shape Node.Diamond, style Filled, fillColor red ]
     , node "b" []
     , "a" ==> "b"
@@ -81,6 +81,18 @@ bower i purescript-dotlang
 
 Changelog
 =========
+
+v4.0.0
+------
+
+Breaking Changes:
+
+- dotlang now internally represents attributes as a record. To **migrate**:
+    - replace calls to Attribute constructors with their lower-case counter-part:
+        E.g. `FontColor` with calls to `fontColor`
+    - replace calls to `Node`, `Edge` and `Global` with `node`, `edge` and `global`
+- to avoid name collisions, `Edge.Diamond :: ArrowHead` was renamed to `Edge.FDiamond`
+
 
 v3.0.0
 ------

@@ -9,6 +9,7 @@ import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(..))
 import Record as Record
 
+--| https://www.graphviz.org/doc/info/attrs.html#k:arrowType
 data ArrowHeadStyle
   = Normal
   | Inv
@@ -20,7 +21,7 @@ data ArrowHeadStyle
   | Tee
   | Empty
   | InvEmpty
-  | Diamond
+  | FDiamond
   | ODiamond
   | EDiamond
   | Crow
@@ -46,7 +47,7 @@ instance arrowHeadStyleValue :: DotLangValue ArrowHeadStyle where
   toValue Tee = "tee"
   toValue Empty = "empty"
   toValue InvEmpty = "invempty"
-  toValue Diamond = "diamond"
+  toValue FDiamond = "diamond"
   toValue ODiamond = "odiamond"
   toValue EDiamond = "ediamond"
   toValue Crow = "crow"
