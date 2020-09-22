@@ -5,30 +5,25 @@ documentation can be found on [pursuit](https://pursuit.purescript.org/packages/
 
 define your model like this:
 
-```purescript
-DiGraph [
-    node "a" [ Shape Diamond, Style Filled,  Node.FillColor red ],
-    node "b" [],
-    "a" ==> "b",
-    "a" =*> "d" $ [ Edge.FillColor red ],
-    Subgraph [
-        node "d" []
-    ]
-]
-```
-
-can be rendered using `toText` to:
-
-```
-digraph {
-    a [shape=diamond, style=filled, fillcolor="#f44336"];
-    b [];
-    a -> b;
-    a -> d [fillcolor="#f44336"];
-    subgraph {
-        d []; 
-    }
-}
+```purescript run
+> import Data.DotLang
+> import Data.DotLang.Attr (FillStyle(..))
+> import Data.DotLang.Attr.Node as Node
+> import Data.DotLang.Attr.Edge as Edge
+> import Color.Scheme.HTML (red)
+> exampleGraph = DiGraph [
+      node "a" [ Node.Shape Node.Diamond, Node.Style Filled,  Node.FillColor red ],
+      node "b" [],
+      "a" ==> "b",
+      "a" =*> "d" $ [ Edge.FillColor red ],
+      Subgraph [
+          node "d" []
+      ]
+  ]
+> -- can be turned into a dotlang using `toText`
+> import Data.DotLang.Class (toText)
+> toText exampleGraph
+"digraph {a [shape=diamond, style=filled, fillcolor=\"#ff0000\"]; b []; a -> b; a -> d [fillcolor=\"#ff0000\"]; subgraph { d []; }}"
 ```
 
 ### Installation

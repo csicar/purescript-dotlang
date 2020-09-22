@@ -1,7 +1,6 @@
 module Data.DotLang.Attr.Edge where
 
 import Prelude
-
 import Color (Color, toHexString)
 import Data.DotLang.Attr (FillStyle)
 import Data.DotLang.Class (class DotLang, toText)
@@ -82,26 +81,29 @@ instance showAttr :: Show Attr where
 instance attrDotLang :: DotLang Attr where
   toText (Color s) = "color=\"" <> toHexString s <> "\""
   toText (FontColor s) = "fontcolor=\"" <> toHexString s <> "\""
-  toText (FontSize i) = "fontsize="<> show i
-  toText (Style f) = "style="<> toText f
+  toText (FontSize i) = "fontsize=" <> show i
+  toText (Style f) = "style=" <> toText f
   toText (Label (TextLabel t)) = "label=" <> show t
   toText (Label (HtmlLabel t)) = "label=" <> t
   toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
-  toText (PenWidth i) = "penwidth="<> show i
+  toText (PenWidth i) = "penwidth=" <> show i
   toText (ArrowHead s) = "arrowhead=" <> toText s
 
 -- |
--- | ```purescript
--- | htmlLabel "<table><tr><td>Label</td></tr></table>" -- :: Attr
--- | ```
+--| ```purescript run
+--| > import Data.DotLang.Attr.Edge
+--| > :t htmlLabel "<table><tr><td>Label</td></tr></table>" 
+--| Attr
+--| ```
 -- | htmlLabel as a part of an attribute of an edge.
 htmlLabel :: String -> Attr
 htmlLabel = HtmlLabel >>> Label
 
 -- |
--- | ```purescript
--- | label "..." -- :: Attr
--- | ```
+--| ```purescript run
+--| > :t label "..." 
+--| Attr
+--| ```
 -- | label as a part of an attribute of an edge.
 label :: String -> Attr
 label = TextLabel >>> Label

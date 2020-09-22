@@ -11,29 +11,35 @@ import Data.Array (null)
 import Prelude (class Show, ($), (<$>), (<>))
 
 -- | type alias for a Nodes Name
-type Id = String
+type Id
+  = String
 
 -- | Dot-Node
--- | example :
--- | ```purescript
--- | Node "e" [Margin 3, Label "some label"]
--- | ```
--- | is turned into: `e [margin=3, label="some label"];`
-data Node = Node Id (Array Node.Attr)
-
+--| ```purescript run
+--| > import Data.DotLang
+--| > import Data.DotLang.Class (toText)
+--| > import Data.DotLang.Attr.Node as Node
+--| > toText $ Node "e" [Node.Margin 3, Node.label "some label"]
+--| "e [margin=3, label=\"some label\"]"
+--| ```
+data Node
+  = Node Id (Array Node.Attr)
 
 -- | get a nodes id
--- | example:
--- | ```purescript
--- | nodeId (Node "e" [Label "foo"]) == "e"
--- | ```
+--| ```purescript run
+--| > nodeId (Node "e" [Node.label "foo"])
+--| "e"
+--| ```
 nodeId :: Node -> Id
 nodeId (Node id _) = id
 
 -- | change Nodes id to a new one; keeing the old id as the label
--- | example: `mapNodeId (\a -> a+"!") (Node "e" []) == Node "e!" [Label "e"]`
+--| ```purescript run
+--| > changeNodeId (_ <> "!") (Node "e" [])
+--| (Node "e!" [(Label (TextLabel "e"))])
+--| ```
 changeNodeId :: (Id -> Id) -> Node -> Node
-changeNodeId f (Node id attr) = Node (f id) $ attr <> [Node.label id]
+changeNodeId f (Node id attr) = Node (f id) $ attr <> [ Node.label id ]
 
 derive instance genericNode :: Generic Node _
 
@@ -43,7 +49,6 @@ instance showNode :: Show Node where
 instance nodeDotLang :: DotLang Node where
   toText (Node id attrs) = id <> " [" <> joinWith ", " (toText <$> attrs) <> "]"
 
-
 data EdgeType
   = Forward
   | Backward
@@ -51,7 +56,8 @@ data EdgeType
 
 derive instance genericEdgeType :: Generic EdgeType _
 
-instance showEdgeType :: Show EdgeType where show = genericShow
+instance showEdgeType :: Show EdgeType where
+  show = genericShow
 
 instance dotLangEdgeType :: DotLang EdgeType where
   toText Forward = "->"
@@ -59,9 +65,13 @@ instance dotLangEdgeType :: DotLang EdgeType where
   toText NoDir = "--"
 
 -- | egde from id to id
--- | `toText $ Edge Forward "a" "b" []` == `a -> b []`
+--| ```purescript run
+--| > toText $ Edge Forward "a" "b" []
+--| "a -> b"
+--| ```
 -- | EdgeType determines the direction of the arrow
-data Edge = Edge EdgeType Id Id (Array Edge.Attr)
+data Edge
+  = Edge EdgeType Id Id (Array Edge.Attr)
 
 derive instance genericEdge :: Generic Edge _
 
@@ -71,7 +81,7 @@ instance showEdge :: Show Edge where
 instance dotLangEdge :: DotLang Edge where
   toText (Edge e id id2 attrs) = id <> " " <> (toText e) <> " " <> id2 <> attrText
     where
-      attrText = if null attrs then "" else " [" <> joinWith ", " (toText <$> attrs) <> "]"
+    attrText = if null attrs then "" else " [" <> joinWith ", " (toText <$> attrs) <> "]"
 
 -- | definition in a graph
 data Definition
@@ -81,27 +91,33 @@ data Definition
   | Subgraph (Array Definition)
 
 -- |
--- | ```purescript
--- | global [ Global.RankDir  Global.FromLeft ] -- ∷ Definition
--- | ```
+--| ```purescript run
+--| > import Data.DotLang.Attr.Global as Global
+--| > :t global [Global.RankDir Global.FromLeft]
+--| Definition
+--| ```
+-- |
 -- | global as a part of a definition
 global :: Array Global.Attr -> Definition
 global = Global
 
 -- |
--- | ```purescript
--- | node "a" [] -- ∷ Definition
--- | ```
+--| ```purescript run
+--| > :t node "a" []
+--| Definition
+--| ```
 -- | node as a part of a definition
 node :: Id → Array Node.Attr → Definition
 node id attrs = NodeDef $ Node id attrs
 
 -- |
--- | ```purescript
--- | edge Forward "a" "b" [] -- ∷ Definition
--- | ```
+--| ```purescript run
+--| > :t edge Forward "a" "b" [] 
+--| Definition
+--| ```
 -- | edge as a part of a definition. 
--- | `==>` and `=*>` can also be used for that purpose.
+-- | `==>` and `=*>` can also be used for that purpose:
+-- |
 edge :: EdgeType → Id → Id → Array Edge.Attr → Definition
 edge t id id2 attrs = EdgeDef $ Edge t id id2 attrs
 
@@ -124,40 +140,52 @@ normalEdge ∷ Id → Id → Definition
 normalEdge l r = normalEdgeWithAttrs l r []
 
 -- |
--- | ```purescript
--- | "a" ==> "b" -- :: Definition
--- | ```
+--| ```purescript run
+--| > :t "a" ==> "b" 
+--| Definition
+--| ```
 -- | Forward edge as as a definition
 infix 5 forwardEdge as ==>
+
 -- |
--- | ```purescript
--- | "a" =*> "b" $ [ Edge.FillColor red ]
--- | -- toText will be: a -> b [fillcolor="#f44336"];
--- | ```
+--| ```purescript run
+--| > import Data.DotLang.Attr.Edge as Edge
+--| > import Color.Scheme.HTML (red)
+--| > toText $ "a" =*> "b" $ [ Edge.FillColor red ]
+--| "a -> b [fillcolor=\"#ff0000\"]; "
+--| ```
 -- | Forward edge with attributes as a definition
 infix 5 forwardEdgeWithAttrs as =*>
+
 -- |
--- | ```purescript
--- | "a" <== "b" -- :: Definition
--- | ```
+--| ```purescript run
+--| > :t "a" <== "b"
+--| Definition
+--| ```
 -- | Backward edge as a definition
 infix 5 backwardEdge as <==
+
 -- |
--- | ```purescript
--- | "a" <*= "b" $ [ Edge.FillColor red ]
--- | ```
+--| ```purescript run
+--| > :t "a" <*= "b" $ [ Edge.FillColor red ]
+--| Definition
+--| ```
 -- | Backward edge with attributes as a definition
 infix 5 backwardEdgeWithAttrs as <*=
+
 -- |
--- | ```purescript
--- | "a" -==- "b"
--- | ```
+--| ```purescript run
+--| > toText $ "a" -==- "b"
+--| "a -- b; "
+--| ```
 -- | Normal edge as definition
 infix 5 normalEdge as -==-
+
 -- |
--- | ```purescript
--- | "a" =*= "b" $ [ Edge.FillColor red ]
--- | ```
+--| ```purescript run
+--| > toText $ "a" =*= "b" $ [ Edge.FillColor red ]
+--| "a -- b [fillcolor=\"#ff0000\"]; "
+--| ```
 -- | Normal edge with attibutes
 infix 5 normalEdgeWithAttrs as =*=
 
@@ -172,18 +200,19 @@ data Graph
   = Graph (Array Definition)
   | DiGraph (Array Definition)
 
-
 instance graphDotLang :: DotLang Graph where
   toText (Graph defs) = "graph {" <> (joinWith "" $ toText <$> defs) <> "}"
   toText (DiGraph defs) = "digraph {" <> (joinWith "" $ toText <$> defs) <> "}"
 
 -- | create graph from Nodes and Edges
--- | example: `graphFromElements [Node "e" [], Node "d" []] [Edge "e" "f"]`
+--| ```purescript run
+--| > :t graphFromElements [Node "e" [], Node "d" []] [ Edge Forward "e" "f" []]
+--| Graph
+--| ```
+-- |
 graphFromElements :: Array (Node) -> Array (Edge) -> Graph
 graphFromElements n e = DiGraph $ (NodeDef <$> n) <> (EdgeDef <$> e)
 
 -- | `a` is a type that can be represented by a Dot-Graph
 class GraphRepr a where
   toGraph :: a -> Graph
-
-

@@ -1,7 +1,6 @@
 module Data.DotLang.Attr.Node where
 
 import Prelude
-
 import Color (Color, toHexString)
 import Data.DotLang.Attr (FillStyle)
 import Data.DotLang.Class (class DotLang, toText)
@@ -35,30 +34,79 @@ instance showAttr :: Show Attr where
   show = genericShow
 
 instance attrDotLang :: DotLang Attr where
-  toText (Margin i) = "margin="<> show i
+  toText (Margin i) = "margin=" <> show i
   toText (Color s) = "color=\"" <> toHexString s <> "\""
   toText (FontColor s) = "fontcolor=\"" <> toHexString s <> "\""
-  toText (FontSize i) = "fontsize="<> show i
-  toText (Width i) = "width="<> show i
-  toText (Shape t) = "shape="<> toText t
-  toText (Style f) = "style="<> toText f
+  toText (FontSize i) = "fontsize=" <> show i
+  toText (Width i) = "width=" <> show i
+  toText (Shape t) = "shape=" <> toText t
+  toText (Style f) = "style=" <> toText f
   toText (Label (TextLabel t)) = "label=" <> show t
   toText (Label (HtmlLabel t)) = "label=" <> t
   toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
-  toText (PenWidth i) = "penwidth="<> show i
+  toText (PenWidth i) = "penwidth=" <> show i
 
 -- | possible node shapes
 data ShapeType
-  = Box | Polygon | Ellipse | Oval | Circle | Point | Egg
-  | Triangle | Plaintext | Plain | Diamond | Trapezium | Parallelogram
-  | House | Pentagon | Hexagon | Septagon | Octagon | Doublecircle
-  | Doubleoctagon | Tripleoctagon | Invtriangle | Invtrapezium
-  | Invhouse | Mdiamond | Msquare | Mcircle | Rect | Rectangle | Square
-  | Star | None | Underline | Cylinder | Note | Tab | Folder | Box3d
-  | Component | Promoter | Cds | Terminator | Utr | Primersite | Restrictionsite
-  | Fivepoverhang | Threepoverhang | Noverhang | Assembly | Signature
-  | Insulator | Ribosite | Rnastab | Proteasesite | Proteinstab | Rpromoter
-  | Rarrow | Larrow | Lpromoter
+  = Box
+  | Polygon
+  | Ellipse
+  | Oval
+  | Circle
+  | Point
+  | Egg
+  | Triangle
+  | Plaintext
+  | Plain
+  | Diamond
+  | Trapezium
+  | Parallelogram
+  | House
+  | Pentagon
+  | Hexagon
+  | Septagon
+  | Octagon
+  | Doublecircle
+  | Doubleoctagon
+  | Tripleoctagon
+  | Invtriangle
+  | Invtrapezium
+  | Invhouse
+  | Mdiamond
+  | Msquare
+  | Mcircle
+  | Rect
+  | Rectangle
+  | Square
+  | Star
+  | None
+  | Underline
+  | Cylinder
+  | Note
+  | Tab
+  | Folder
+  | Box3d
+  | Component
+  | Promoter
+  | Cds
+  | Terminator
+  | Utr
+  | Primersite
+  | Restrictionsite
+  | Fivepoverhang
+  | Threepoverhang
+  | Noverhang
+  | Assembly
+  | Signature
+  | Insulator
+  | Ribosite
+  | Rnastab
+  | Proteasesite
+  | Proteinstab
+  | Rpromoter
+  | Rarrow
+  | Larrow
+  | Lpromoter
 
 derive instance genericShapeType :: Generic ShapeType _
 
@@ -127,17 +175,21 @@ instance dotLangShape :: DotLang ShapeType where
   toText Lpromoter = "Lpromoter"
 
 -- |
--- | ```purescript
--- | htmlLabel "<table><tr><td>Label</td></tr></table>" -- :: Attr
--- | ```
+--| ```purescript run
+--| > import Data.DotLang.Attr.Node
+--| > :t htmlLabel "<table><tr><td>Label</td></tr></table>"
+--| Attr
+--| ```
 -- | htmlLabel as a part of an attribute of a node.
 htmlLabel :: String -> Attr
 htmlLabel = HtmlLabel >>> Label
 
 -- |
--- | ```purescript
--- | textLabel "..." -- :: Attr
--- | ```
+--| ```purescript run
+--| > import Data.DotLang.Attr.Node
+--| > :t label "..." 
+--| Attr
+--| ```
 -- | label as a part of an attribute of a node.
 label :: String -> Attr
 label = TextLabel >>> Label

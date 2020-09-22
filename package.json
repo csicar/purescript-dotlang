@@ -1,0 +1,30 @@
+{
+  "name": "purescript-dotlang",
+  "version": "1.0.0",
+  "description": "Dot-Lang",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "psc-package": "^3.0.1",
+    "pulp": "^13.0.0",
+    "purescript-doctest": "^0.1.5",
+    "purp": "^1.0.0",
+    "purty": "^6.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm run doctest:gen && spago -x test.dhall test",
+    "doctest:gen": "shopt -s globstar && purepur -o generated-doctests --src 'src/**/*.purs' --src './README.md' $(spago sources)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csicar/purescript-dotlang.git"
+  },
+  "author": "csicar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/csicar/purescript-dotlang/issues"
+  },
+  "homepage": "https://github.com/csicar/purescript-dotlang#readme"
+}
