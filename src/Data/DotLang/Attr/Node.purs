@@ -107,6 +107,7 @@ data ShapeType
   | Rarrow
   | Larrow
   | Lpromoter
+  | Record
 
 derive instance genericShapeType :: Generic ShapeType _
 
@@ -173,6 +174,7 @@ instance dotLangShape :: DotLang ShapeType where
   toText Rarrow = "Rarrow"
   toText Larrow = "Larrow"
   toText Lpromoter = "Lpromoter"
+  toText Record = "record"
 
 -- |
 --| ```purescript run
