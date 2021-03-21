@@ -4,7 +4,7 @@ import Prelude
 
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
+import Data.Show.Generic (genericShow)
 
 data RankDirValue
   = FromTop

@@ -5,7 +5,6 @@
   [ "colors"
   , "console"
   , "effect"
-  , "generics-rep"
   , "prelude"
   , "psci-support"
   , "strings"

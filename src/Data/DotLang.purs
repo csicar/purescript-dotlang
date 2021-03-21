@@ -5,7 +5,7 @@ import Data.DotLang.Attr.Node as Node
 import Data.DotLang.Attr.Global as Global
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
+import Data.Show.Generic (genericShow)
 import Data.String (joinWith)
 import Data.Array (null)
 import Prelude (class Show, ($), (<$>), (<>))

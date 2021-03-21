@@ -5,7 +5,7 @@ import Color (Color, toHexString)
 import Data.DotLang.Attr (FillStyle)
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
+import Data.Show.Generic (genericShow)
 
 data LabelValue
   = TextLabel String
