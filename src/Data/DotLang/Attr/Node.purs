@@ -1,20 +1,50 @@
 module Data.DotLang.Attr.Node where
 
 import Prelude
+
 import Color (Color, toHexString)
+import Data.Array (foldMap)
 import Data.DotLang.Attr (FillStyle)
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
+import Data.Maybe (Maybe(..), maybe)
 import Data.Show.Generic (genericShow)
+import Data.String (joinWith)
+
 
 data LabelValue
   = TextLabel String
   | HtmlLabel String
+  | RecordLabel RecordLabelValue
 
 derive instance genericLabel :: Generic LabelValue _
 
 instance showLabel :: Show LabelValue where
-  show = genericShow
+  show l = genericShow l
+
+renderLabel :: LabelValue -> String
+renderLabel = case _ of
+  TextLabel t -> show t
+  HtmlLabel t -> t
+  RecordLabel recordValue -> show $ renderRecordLabelValue recordValue
+
+
+data RecordLabelValue 
+  = SubRecord (Array {fieldId:: Maybe String, value:: RecordLabelValue})
+  | Base String
+
+derive instance genericRecordLabelValue :: Generic RecordLabelValue _
+
+instance showRecordLabelValue :: Show RecordLabelValue where
+  show l = genericShow l
+
+renderRecordLabelValue :: RecordLabelValue -> String
+renderRecordLabelValue = case _ of
+  SubRecord parts -> joinWith " | " $ map renderPart parts
+    where 
+      renderPart {fieldId, value} = brace "{" "}" $ (maybe "" (brace "<" ">") fieldId) <> renderRecordLabelValue value
+      brace left right str =  left <> str <> right
+  Base str -> str
 
 data Attr
   = Color Color
@@ -41,8 +71,7 @@ instance attrDotLang :: DotLang Attr where
   toText (Width i) = "width=" <> show i
   toText (Shape t) = "shape=" <> toText t
   toText (Style f) = "style=" <> toText f
-  toText (Label (TextLabel t)) = "label=" <> show t
-  toText (Label (HtmlLabel t)) = "label=" <> t
+  toText (Label l) = "label=" <> renderLabel l
   toText (FillColor c) = "fillcolor=\"" <> toHexString c <> "\""
   toText (PenWidth i) = "penwidth=" <> show i
 
@@ -195,3 +224,22 @@ htmlLabel = HtmlLabel >>> Label
 -- | label as a part of an attribute of a node.
 label :: String -> Attr
 label = TextLabel >>> Label
+
+--| ```purescript run
+--| > import Data.DotLang
+--| > import Data.DotLang.Class (toText)
+--| > toText $ node "a" [recordLabel [subId "test" $ subLabel "c", subLabel "d", subRecord [ subLabel "k", subLabel "l"]]]
+--| "a [label=\"{<test>c} | {d} | {{k} | {l}}\"]; "
+--| ```
+-- |
+recordLabel :: Array {fieldId:: Maybe String, value:: RecordLabelValue} -> Attr
+recordLabel = SubRecord >>> RecordLabel >>> Label
+
+subRecord :: Array {fieldId:: Maybe String, value:: RecordLabelValue} -> {fieldId:: Maybe String, value:: RecordLabelValue} 
+subRecord v = {fieldId: Nothing, value: SubRecord v }
+
+subLabel :: String -> {fieldId :: Maybe String, value :: RecordLabelValue}
+subLabel value = {fieldId : Nothing, value: Base value }
+
+subId :: String -> {fieldId :: Maybe String, value :: RecordLabelValue} ->{fieldId :: Maybe String, value :: RecordLabelValue} 
+subId str {value} = {fieldId: Just str, value: value}
