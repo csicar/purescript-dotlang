@@ -2,9 +2,11 @@
 , license = "MIT"
 , repository = "https://github.com/csicar/purescript-dotlang.git"
 , dependencies =
-  [ "colors"
+  [ "arrays"
+  , "colors"
   , "console"
   , "effect"
+  , "maybe"
   , "prelude"
   , "psci-support"
   , "strings"
