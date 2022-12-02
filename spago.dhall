@@ -2,13 +2,16 @@
 , license = "MIT"
 , repository = "https://github.com/csicar/purescript-dotlang.git"
 , dependencies =
-  [ "colors"
+  [ "arrays"
+  , "colors"
   , "console"
   , "effect"
+  , "maybe"
   , "prelude"
   , "psci-support"
+  , "spec"
   , "strings"
   ]
 , packages = ./packages.dhall
-, sources = [ "src/**/*.purs" ]
+, sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }
