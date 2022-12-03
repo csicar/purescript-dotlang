@@ -42,9 +42,48 @@ instance pageDirValueDotLang :: DotLang PageDirValue where
   toText Lb = "LB"
   toText Lt = "LT"
 
+data LabelJustValue = L | R
+
+derive instance Generic LabelJustValue _
+
+instance Show LabelJustValue where
+  show = genericShow
+
+instance DotLang LabelJustValue where
+  toText L = "l"
+  toText R = "r"
+
+data LabelLocValue = T | B
+
+derive instance Generic LabelLocValue _
+
+instance Show LabelLocValue where
+  show = genericShow
+
+instance DotLang LabelLocValue where
+  toText T = "t"
+  toText B = "b"
+
+data StyleValue = Filled | Striped | Rounded
+
+derive instance Generic StyleValue _
+
+instance Show StyleValue where
+  show = genericShow
+
+instance DotLang StyleValue where
+  toText Filled = "filled"
+  toText Striped = "striped"
+  toText Rounded = "rounded"
+
 data Attr
   = RankDir RankDirValue
   | PageDir PageDirValue
+  | Label String
+  | LabelJust LabelJustValue
+  | LabelLoc LabelLocValue
+  | Compound Boolean
+  | Style StyleValue
 
 derive instance genericAttr :: Generic Attr _
 
@@ -54,3 +93,8 @@ instance showAttr :: Show Attr where
 instance attrDotLang :: DotLang Attr where
   toText (RankDir dir) = "rankdir=" <> toText dir
   toText (PageDir dir) = "pagedir=" <> toText dir
+  toText (Label val) = "label=" <> show val
+  toText (LabelJust val) = "labeljust=" <> toText val
+  toText (LabelLoc val) = "labelloc=" <> toText val
+  toText (Compound val) = "compound=" <> show val
+  toText (Style val) = "style=" <> toText val
