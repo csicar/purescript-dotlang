@@ -3,14 +3,40 @@ module Data.DotLang.Attr.Node where
 import Prelude
 
 import Color (Color, toHexString)
-import Data.Array (foldMap)
-import Data.DotLang.Attr (FillStyle)
 import Data.DotLang.Class (class DotLang, toText)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Show.Generic (genericShow)
 import Data.String (joinWith)
 
+data Style
+  = Dashed
+  | Dotted
+  | Solid
+  | Invis
+  | Bold
+  | Filled
+  | Striped
+  | Wedged
+  | Diagonals
+  | Rounded
+
+derive instance Generic Style _
+
+instance Show Style where
+  show = genericShow
+
+instance DotLang Style where
+  toText Dashed = "dashed"
+  toText Dotted = "dotted"
+  toText Solid = "solid"
+  toText Invis = "invis"
+  toText Bold = "bold"
+  toText Filled = "filled"
+  toText Striped = "striped"
+  toText Wedged = "wedged"
+  toText Diagonals = "diagonals"
+  toText Rounded = "rounded"
 
 data LabelValue
   = TextLabel String
@@ -54,7 +80,7 @@ data Attr
   | Width Int
   | Label LabelValue
   | Shape ShapeType
-  | Style FillStyle
+  | Style Style
   | FillColor Color
   | PenWidth Number
 
